@@ -7,7 +7,7 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <IsRoslynComponent>true</IsRoslynComponent>
     <Description>Volt Framework - Source generators for compile-time convention wiring</Description>
-    <PackageId>Volt.Core.Generators</PackageId>
+    <PackageId>VoltFramework.Core.Generators</PackageId>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 

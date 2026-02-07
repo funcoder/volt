@@ -15,7 +15,7 @@ Build full-stack web apps or APIs with zero boilerplate. Models go in `Models/`,
 ### Install the CLI
 
 ```bash
-dotnet tool install -g Volt.Cli
+dotnet tool install -g VoltFramework.Cli
 ```
 
 ### Create a New Project
@@ -452,19 +452,19 @@ Volt is modular - use only what you need, or install the meta-package for everyt
 
 | Package | Description |
 |---------|-------------|
-| `Volt` | Meta-package (includes all packages below) |
-| `Volt.Core` | Conventions, base classes, attributes, validation |
-| `Volt.Core.Generators` | Source generators for auto-wiring (compile-time) |
-| `Volt.Data` | EF Core conventions, `VoltDbContext`, query extensions |
-| `Volt.Web` | `ResourceController<T>`, routing, HTMX helpers, tag helpers |
-| `Volt.Auth` | ASP.NET Core Identity setup with opinionated defaults |
-| `Volt.Jobs` | Background job abstraction over Coravel |
-| `Volt.Mailer` | Email system with Razor templates and FluentEmail |
-| `Volt.Storage` | File attachments with local disk and cloud backends |
-| `Volt.RealTime` | SignalR channel conventions and broadcasting |
-| `Volt.Testing` | Test factories, assertions, `WebApplicationFactory` base |
-| `Volt.Cli` | CLI tool (`dotnet tool`) for project management |
-| `Volt.Templates` | `dotnet new` project templates |
+| `VoltFramework` | Meta-package (includes all packages below) |
+| `VoltFramework.Core` | Conventions, base classes, attributes, validation |
+| `VoltFramework.Core.Generators` | Source generators for auto-wiring (compile-time) |
+| `VoltFramework.Data` | EF Core conventions, `VoltDbContext`, query extensions |
+| `VoltFramework.Web` | `ResourceController<T>`, routing, HTMX helpers, tag helpers |
+| `VoltFramework.Auth` | ASP.NET Core Identity setup with opinionated defaults |
+| `VoltFramework.Jobs` | Background job abstraction over Coravel |
+| `VoltFramework.Mailer` | Email system with Razor templates and FluentEmail |
+| `VoltFramework.Storage` | File attachments with local disk and cloud backends |
+| `VoltFramework.RealTime` | SignalR channel conventions and broadcasting |
+| `VoltFramework.Testing` | Test factories, assertions, `WebApplicationFactory` base |
+| `VoltFramework.Cli` | CLI tool (`dotnet tool`) for project management |
+| `VoltFramework.Templates` | `dotnet new` project templates |
 
 ---
 
@@ -487,7 +487,7 @@ dotnet test
 
 ```bash
 dotnet pack src/Volt.Cli/Volt.Cli.csproj
-dotnet tool install --global --add-source src/Volt.Cli/bin/Release Volt.Cli
+dotnet tool install --global --add-source src/Volt.Cli/bin/Release VoltFramework.Cli
 ```
 
 ### Installing Templates Locally

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Volt Framework - Routing, ResourceController, view helpers, and HTMX integration</Description>
-    <PackageId>Volt.Web</PackageId>
+    <PackageId>VoltFramework.Web</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

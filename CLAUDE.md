@@ -35,14 +35,14 @@ The CLI tool (`volt`) is distributed as a `dotnet tool`. For local testing:
 
 ```bash
 dotnet pack src/Volt.Cli/Volt.Cli.csproj -c Release -o artifacts
-dotnet tool install -g Volt.Cli --add-source artifacts --version 0.1.0
+dotnet tool install -g VoltFramework.Cli --add-source artifacts --version 0.2.0
 ```
 
 Templates must be packed and installed separately:
 
 ```bash
 dotnet pack templates/Volt.Templates/Volt.Templates.csproj -c Release -o artifacts
-dotnet new install artifacts/Volt.Templates.0.1.0.nupkg
+dotnet new install artifacts/VoltFramework.Templates.0.2.0.nupkg
 ```
 
 A `VoltLocal` NuGet source pointing to `artifacts/` must be configured in the global NuGet.Config for generated projects to resolve Volt packages.

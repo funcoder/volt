@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Volt Framework - Email system with Razor templates and previews</Description>
-    <PackageId>Volt.Mailer</PackageId>
+    <PackageId>VoltFramework.Mailer</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

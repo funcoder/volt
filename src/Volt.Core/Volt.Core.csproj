@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Volt Framework - Core conventions, base classes, and attributes</Description>
-    <PackageId>Volt.Core</PackageId>
+    <PackageId>VoltFramework.Core</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

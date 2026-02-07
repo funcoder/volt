@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Volt Framework - EF Core conventions, model base, and seeding</Description>
-    <PackageId>Volt.Data</PackageId>
+    <PackageId>VoltFramework.Data</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

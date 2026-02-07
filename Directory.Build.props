@@ -18,6 +18,6 @@
     <PackageTags>aspnetcore;framework;rails;conventions;productivity</PackageTags>
 
     <!-- Versioning -->
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>0.2.0</VersionPrefix>
   </PropertyGroup>
 </Project>

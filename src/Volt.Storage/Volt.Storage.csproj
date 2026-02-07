@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Volt Framework - File attachments, cloud providers, and image variants</Description>
-    <PackageId>Volt.Storage</PackageId>
+    <PackageId>VoltFramework.Storage</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

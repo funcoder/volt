@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Volt Framework - Opinionated ASP.NET Core Identity setup</Description>
-    <PackageId>Volt.Auth</PackageId>
+    <PackageId>VoltFramework.Auth</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

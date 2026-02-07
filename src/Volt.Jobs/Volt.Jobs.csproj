@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Volt Framework - Background job abstraction with Coravel</Description>
-    <PackageId>Volt.Jobs</PackageId>
+    <PackageId>VoltFramework.Jobs</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

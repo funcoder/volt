@@ -4,7 +4,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>volt</ToolCommandName>
     <Description>Volt Framework - CLI tool for project scaffolding and management</Description>
-    <PackageId>Volt.Cli</PackageId>
+    <PackageId>VoltFramework.Cli</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

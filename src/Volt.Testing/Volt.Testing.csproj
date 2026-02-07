@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Volt Framework - Test helpers, factories, and assertions</Description>
-    <PackageId>Volt.Testing</PackageId>
+    <PackageId>VoltFramework.Testing</PackageId>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
