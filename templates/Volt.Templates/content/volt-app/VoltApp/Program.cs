@@ -1,3 +1,4 @@
+using Volt.Web.Middleware;
 using VoltApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -28,6 +28,17 @@ public abstract class VoltDbContext : DbContext
     }
 
     /// <summary>
+    /// Initializes a new <see cref="VoltDbContext"/> with EF Core options and default Volt conventions.
+    /// Use this constructor when Volt options are not registered in DI.
+    /// </summary>
+    /// <param name="options">The EF Core <see cref="DbContextOptions"/>.</param>
+    protected VoltDbContext(DbContextOptions options)
+        : base(options)
+    {
+        _voltOptions = new VoltDbOptions();
+    }
+
+    /// <summary>
     /// Applies Volt conventions to the model during configuration.
     /// Call <c>base.OnModelCreating(modelBuilder)</c> from any override to preserve conventions.
     /// </summary>

@@ -80,7 +80,7 @@ public static class NewCommand
         }
 
         var templateArgs = BuildTemplateArgs(name, database, api);
-        var exitCode = await ProcessRunner.RunAsync("dotnet", $"new volt {templateArgs}");
+        var exitCode = await ProcessRunner.RunAsync("dotnet", $"new {templateArgs}");
 
         if (exitCode != 0)
         {
@@ -110,13 +110,7 @@ public static class NewCommand
 
     private static string BuildTemplateArgs(string name, string database, bool api)
     {
-        var args = $"-n {name} --database {database}";
-
-        if (api)
-        {
-            args += " --api";
-        }
-
-        return args;
+        var templateName = api ? "volt-api" : "volt";
+        return $"{templateName} -n {name} --database {database}";
     }
 }
