@@ -1,0 +1,58 @@
+using Microsoft.AspNetCore.Mvc;
+using {{ app_name }}.Models;
+
+namespace {{ app_name }}.Controllers;
+
+/// <summary>
+/// Handles HTTP requests for {{ model_name }} resources.
+/// </summary>
+[Route("{{ route_path }}")]
+public class {{ controller_name }} : Controller
+{
+{{~ if has_model ~}}
+    /// <summary>
+    /// GET /{{ route_path }} - Lists all {{ model_name_plural }}.
+    /// </summary>
+    [HttpGet]
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// GET /{{ route_path }}/{id} - Shows a single {{ model_name }}.
+    /// </summary>
+    [HttpGet("{id:int}")]
+    public IActionResult Show(int id)
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// GET /{{ route_path }}/new - Displays the new {{ model_name }} form.
+    /// </summary>
+    [HttpGet("new")]
+    public IActionResult New()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// GET /{{ route_path }}/{id}/edit - Displays the edit {{ model_name }} form.
+    /// </summary>
+    [HttpGet("{id:int}/edit")]
+    public IActionResult Edit(int id)
+    {
+        return View();
+    }
+{{~ else ~}}
+    /// <summary>
+    /// GET /{{ route_path }}
+    /// </summary>
+    [HttpGet]
+    public IActionResult Index()
+    {
+        return View();
+    }
+{{~ end ~}}
+}

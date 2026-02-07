@@ -1,0 +1,24 @@
+@model {{ app_name }}.Models.{{ model_name }}
+@{
+    ViewData["Title"] = "{{ model_name }} Details";
+}
+
+<h1>{{ model_name }} Details</h1>
+
+<div>
+    <dl class="row">
+{{~ for field in fields ~}}
+        <dt class="col-sm-2">{{ field.name }}</dt>
+        <dd class="col-sm-10">@Model.{{ field.name }}</dd>
+{{~ end ~}}
+        <dt class="col-sm-2">Created</dt>
+        <dd class="col-sm-10">@Model.CreatedAt</dd>
+        <dt class="col-sm-2">Updated</dt>
+        <dd class="col-sm-10">@Model.UpdatedAt</dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

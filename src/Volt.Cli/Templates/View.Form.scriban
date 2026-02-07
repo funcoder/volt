@@ -1,0 +1,31 @@
+@model {{ app_name }}.Models.{{ model_name }}
+
+<form asp-action="@ViewData["FormAction"]" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+{{~ for field in fields ~}}
+{{~ if field.type == "bool" ~}}
+    <div class="form-check mb-3">
+        <input asp-for="{{ field.name }}" class="form-check-input" />
+        <label asp-for="{{ field.name }}" class="form-check-label"></label>
+        <span asp-validation-for="{{ field.name }}" class="text-danger"></span>
+    </div>
+{{~ else if field.type == "text" ~}}
+    <div class="form-group mb-3">
+        <label asp-for="{{ field.name }}" class="form-label"></label>
+        <textarea asp-for="{{ field.name }}" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="{{ field.name }}" class="text-danger"></span>
+    </div>
+{{~ else ~}}
+    <div class="form-group mb-3">
+        <label asp-for="{{ field.name }}" class="form-label"></label>
+        <input asp-for="{{ field.name }}" class="form-control" />
+        <span asp-validation-for="{{ field.name }}" class="text-danger"></span>
+    </div>
+{{~ end ~}}
+{{~ end ~}}
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

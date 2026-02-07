@@ -1,0 +1,32 @@
+using FluentEmail.Core;
+using Microsoft.Extensions.Options;
+using Volt.Mailer;
+
+namespace {{ app_name }}.Mailers;
+
+/// <summary>
+/// {{ mailer_name }} handles email delivery for {{ mailer_name | string.replace "Mailer" "" }} operations.
+/// Templates are located at Views/Mailers/{{ mailer_name }}/.
+/// </summary>
+public class {{ mailer_name }} : VoltMailer
+{
+    /// <summary>
+    /// Initializes a new instance of <see cref="{{ mailer_name }}"/>.
+    /// </summary>
+    public {{ mailer_name }}(IFluentEmail email, IOptions<VoltMailerOptions> options)
+        : base(email, options)
+    {
+    }
+
+    /// <summary>
+    /// Sends a notification email.
+    /// Template: Views/Mailers/{{ mailer_name }}/Notify.cshtml
+    /// </summary>
+    /// <param name="recipientEmail">The recipient email address.</param>
+    public async Task Notify(string recipientEmail)
+    {
+        To(recipientEmail);
+        Subject("{{ mailer_name | string.replace "Mailer" "" }} Notification");
+        await Send(new { });
+    }
+}

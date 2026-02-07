@@ -1,0 +1,14 @@
+namespace {{ app_name }}.Models;
+
+/// <summary>
+/// {{ model_name }} model.
+/// </summary>
+public class {{ model_name }} : Model<{{ model_name }}>
+{
+{{~ for field in fields ~}}
+    public {{ field.type }} {{ field.name }} { get; init; }{{ if field.default }} = {{ field.default }};{{ end }}
+{{~ end ~}}
+{{~ for assoc in associations ~}}
+    public {{ assoc.type }} {{ assoc.name }} { get; init; } = null!;
+{{~ end ~}}
+}

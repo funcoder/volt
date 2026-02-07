@@ -1,0 +1,42 @@
+using System.Net;
+
+namespace {{ app_name }}.Tests.Controllers;
+
+/// <summary>
+/// Integration tests for the {{ controller_name }}.
+/// </summary>
+public class {{ controller_name }}Test
+{
+    [Fact]
+    public async Task Index_Returns_Success()
+    {
+        // TODO: Set up test server with VoltTestBase
+        // var response = await Client.GetAsync("/{{ route_path }}");
+        // Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        await Task.CompletedTask;
+    }
+
+    [Fact]
+    public async Task Show_Returns_NotFound_For_Invalid_Id()
+    {
+        // TODO: Set up test server with VoltTestBase
+        // var response = await Client.GetAsync("/{{ route_path }}/999");
+        // Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        await Task.CompletedTask;
+    }
+
+    [Fact]
+    public async Task Create_Redirects_On_Success()
+    {
+        // TODO: Set up test server with VoltTestBase
+        // var content = new FormUrlEncodedContent(new Dictionary<string, string>
+        // {
+{{~ for field in fields ~}}
+        //     ["{{ field.name }}"] = {{ field.default_value }},
+{{~ end ~}}
+        // });
+        // var response = await Client.PostAsync("/{{ route_path }}", content);
+        // Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        await Task.CompletedTask;
+    }
+}

@@ -1,0 +1,35 @@
+@model IEnumerable<{{ app_name }}.Models.{{ model_name }}>
+@{
+    ViewData["Title"] = "{{ model_name_plural }}";
+}
+
+<h1>{{ model_name_plural }}</h1>
+
+<p>
+    <a asp-action="New">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+{{~ for field in fields ~}}
+            <th>{{ field.name }}</th>
+{{~ end ~}}
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+{{~ for field in fields ~}}
+                <td>@item.{{ field.name }}</td>
+{{~ end ~}}
+                <td>
+                    <a asp-action="Show" asp-route-id="@item.Id">Show</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

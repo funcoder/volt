@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volt.Core" Version="0.1.0" />
+    <PackageReference Include="Volt.Data" Version="0.1.0" />
+    <PackageReference Include="Volt.Web" Version="0.1.0" />
+    <PackageReference Include="Volt.Auth" Version="0.1.0" />
+    <PackageReference Include="Volt.Jobs" Version="0.1.0" />
+    <PackageReference Include="Volt.Core.Generators" Version="0.1.0" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" PrivateAssets="all" />
+    <!--#if (useSqlite) -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
+    <!--#endif -->
+    <!--#if (usePostgres) -->
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+    <!--#endif -->
+    <!--#if (useSqlServer) -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.1" />
+    <!--#endif -->
+  </ItemGroup>
+</Project>

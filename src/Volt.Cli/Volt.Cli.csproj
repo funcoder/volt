@@ -11,4 +11,8 @@
     <PackageReference Include="System.CommandLine" />
     <PackageReference Include="Scriban" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\**\*.scriban" />
+  </ItemGroup>
 </Project>

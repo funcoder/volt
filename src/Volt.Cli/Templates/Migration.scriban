@@ -1,0 +1,45 @@
+using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace {{ app_name }}.Migrations;
+
+/// <summary>
+/// Creates the {{ table_name }} table.
+/// </summary>
+public partial class Create{{ model_name_plural }} : Migration
+{
+    /// <inheritdoc />
+    protected override void Up(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.CreateTable(
+            name: "{{ table_name }}",
+            columns: table => new
+            {
+                Id = table.Column<int>(nullable: false)
+                    .Annotation("Sqlite:Autoincrement", true),
+{{~ for field in fields ~}}
+                {{ field.name }} = table.Column<{{ field.type }}>(nullable: {{ field.nullable }}),
+{{~ end ~}}
+                CreatedAt = table.Column<DateTime>(nullable: false),
+                UpdatedAt = table.Column<DateTime>(nullable: false),
+                DeletedAt = table.Column<DateTime>(nullable: true),
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_{{ table_name }}", x => x.Id);
+{{~ for field in foreign_keys ~}}
+                table.ForeignKey(
+                    name: "FK_{{ table_name }}_{{ field.referenced_table }}_{{ field.name }}",
+                    column: x => x.{{ field.name }},
+                    principalTable: "{{ field.referenced_table }}",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+{{~ end ~}}
+            });
+    }
+
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropTable(name: "{{ table_name }}");
+    }
+}

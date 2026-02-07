@@ -1,0 +1,33 @@
+using Volt.RealTime;
+
+namespace {{ app_name }}.Channels;
+
+/// <summary>
+/// {{ channel_name }} real-time channel.
+/// Clients connect via SignalR at /volt/channels/{{ channel_route }}.
+/// </summary>
+public class {{ channel_name }} : VoltChannel
+{
+    /// <inheritdoc />
+    public override Task OnSubscribed(string connectionId)
+    {
+        // TODO: Handle client subscription (e.g., join groups, send initial state)
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public override Task OnUnsubscribed(string connectionId)
+    {
+        // TODO: Handle client unsubscription (e.g., leave groups, cleanup)
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Broadcasts a message to all connected clients.
+    /// </summary>
+    /// <param name="message">The message to broadcast.</param>
+    public async Task BroadcastMessage(string message)
+    {
+        await Clients.All.SendAsync("Receive", message);
+    }
+}

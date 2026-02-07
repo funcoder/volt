@@ -1,0 +1,27 @@
+using {{ app_name }}.Models;
+using Volt.Data;
+using Volt.Web.Controllers;
+
+namespace {{ app_name }}.Controllers;
+
+/// <summary>
+/// RESTful resource controller for {{ model_name }}.
+/// Inherits standard CRUD actions from <see cref="ResourceController{T}"/>.
+/// </summary>
+public class {{ controller_name }} : ResourceController<{{ model_name }}>
+{
+    /// <inheritdoc />
+    public override string[] PermittedParams { get; } =
+    [
+{{~ for field in fields ~}}
+        "{{ field.name }}",
+{{~ end ~}}
+    ];
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="{{ controller_name }}"/>.
+    /// </summary>
+    public {{ controller_name }}(VoltDbContext db) : base(db)
+    {
+    }
+}

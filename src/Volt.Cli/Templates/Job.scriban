@@ -1,0 +1,27 @@
+using Volt.Jobs;
+
+namespace {{ app_name }}.Jobs;
+
+/// <summary>
+/// Payload for the {{ job_name }} job.
+/// </summary>
+public class {{ job_name }}Payload
+{
+{{~ for field in fields ~}}
+    public {{ field.type }} {{ field.name }} { get; init; }
+{{~ end ~}}
+}
+
+/// <summary>
+/// {{ job_name }} background job.
+/// Enqueue via IJobQueue: await jobQueue.Enqueue&lt;{{ job_name }}&gt;(payload);
+/// </summary>
+public class {{ job_name }} : VoltJob<{{ job_name }}Payload>
+{
+    /// <inheritdoc />
+    public override async Task Execute({{ job_name }}Payload payload)
+    {
+        // TODO: Implement job logic
+        await Task.CompletedTask;
+    }
+}
