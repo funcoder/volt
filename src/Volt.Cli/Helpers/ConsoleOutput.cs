@@ -117,6 +117,15 @@ public static class ConsoleOutput
     }
 
     /// <summary>
+    /// Writes a line indicating a file was modified.
+    /// </summary>
+    /// <param name="relativePath">The relative file path that was modified.</param>
+    public static void FileModified(string relativePath)
+    {
+        WriteColored($"  modify  {relativePath}", ConsoleColor.Cyan);
+    }
+
+    /// <summary>
     /// Writes a line indicating a file was deleted.
     /// </summary>
     /// <param name="relativePath">The relative file path that was deleted.</param>

@@ -25,6 +25,8 @@ public static class ModelGenerator
             ConsoleOutput.FileCreated($"Models/{modelName}.cs");
         }
 
+        DbContextRegistrar.RegisterModel(context, appName, modelName);
+
         var baseTimestamp = DateTime.UtcNow;
         GenerateAttachmentsMigrationIfNeeded(context, appName, parsedFields, baseTimestamp);
         GenerateMigration(context, appName, modelName, parsedFields, baseTimestamp.AddSeconds(1));

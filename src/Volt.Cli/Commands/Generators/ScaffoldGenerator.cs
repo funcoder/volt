@@ -23,6 +23,7 @@ public static class ScaffoldGenerator
         ConsoleOutput.BlankLine();
 
         GenerateModel(context, appName, modelName, parsedFields);
+        DbContextRegistrar.RegisterModel(context, appName, modelName);
         GenerateResourceController(context, appName, modelName, controllerName, parsedFields);
         GenerateViews(context, appName, modelName, parsedFields, routePath);
         var baseTimestamp = DateTime.UtcNow;

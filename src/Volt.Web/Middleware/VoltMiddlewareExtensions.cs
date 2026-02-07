@@ -29,6 +29,8 @@ public static class VoltMiddlewareExtensions
             app.UseHttpsRedirection();
         }
 
+        app.UseMiddleware<PendingMigrationsMiddleware>();
+
         app.UseStaticFiles();
 
         app.UseRouting();
