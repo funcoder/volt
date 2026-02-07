@@ -1,5 +1,6 @@
 using System.CommandLine;
 using Volt.Cli.Helpers;
+using static Volt.Cli.Helpers.NamingConventions;
 
 namespace Volt.Cli.Commands;
 
@@ -273,57 +274,4 @@ public static class DestroyCommand
             ConsoleOutput.FileDeleted($"Migrations/{Path.GetFileName(file)}");
         }
     }
-
-    private static string EnsurePascalCase(string name)
-    {
-        if (string.IsNullOrEmpty(name)) return name;
-        return char.ToUpperInvariant(name[0]) + name[1..];
-    }
-
-    private static string EnsureControllerSuffix(string name)
-    {
-        var pascalName = EnsurePascalCase(name);
-        return pascalName.EndsWith("Controller", StringComparison.Ordinal)
-            ? pascalName
-            : $"{pascalName}Controller";
-    }
-
-    private static string EnsureMailerSuffix(string name)
-    {
-        var pascalName = EnsurePascalCase(name);
-        return pascalName.EndsWith("Mailer", StringComparison.Ordinal)
-            ? pascalName
-            : $"{pascalName}Mailer";
-    }
-
-    private static string EnsureChannelSuffix(string name)
-    {
-        var pascalName = EnsurePascalCase(name);
-        return pascalName.EndsWith("Channel", StringComparison.Ordinal)
-            ? pascalName
-            : $"{pascalName}Channel";
-    }
-
-    private static string Pluralize(string singular)
-    {
-        if (string.IsNullOrEmpty(singular)) return singular;
-
-        if (singular.EndsWith("s", StringComparison.Ordinal)
-            || singular.EndsWith("x", StringComparison.Ordinal)
-            || singular.EndsWith("z", StringComparison.Ordinal)
-            || singular.EndsWith("sh", StringComparison.Ordinal)
-            || singular.EndsWith("ch", StringComparison.Ordinal))
-        {
-            return $"{singular}es";
-        }
-
-        if (singular.EndsWith('y') && singular.Length > 1 && !IsVowel(singular[^2]))
-        {
-            return $"{singular[..^1]}ies";
-        }
-
-        return $"{singular}s";
-    }
-
-    private static bool IsVowel(char c) => c is 'a' or 'e' or 'i' or 'o' or 'u';
 }
