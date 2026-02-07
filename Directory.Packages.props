@@ -1,0 +1,57 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ASP.NET Core -->
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+
+    <!-- Entity Framework Core -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0" />
+    <PackageVersion Include="EFCore.NamingConventions" Version="9.0.0" />
+
+    <!-- CLI -->
+    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta5.25306.1" />
+
+    <!-- Code Generation -->
+    <PackageVersion Include="Scriban" Version="5.12.0" />
+
+    <!-- Source Generators -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
+
+    <!-- Background Jobs -->
+    <PackageVersion Include="Coravel" Version="6.0.2" />
+
+    <!-- Email -->
+    <PackageVersion Include="FluentEmail.Core" Version="3.0.2" />
+    <PackageVersion Include="FluentEmail.Razor" Version="3.0.2" />
+    <PackageVersion Include="FluentEmail.MailKit" Version="3.0.2" />
+
+    <!-- Real-time -->
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.0" />
+
+    <!-- Validation -->
+    <PackageVersion Include="FluentValidation" Version="11.11.0" />
+    <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
+
+    <!-- Testing -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.1" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="FluentAssertions" Version="7.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.0" />
+
+    <!-- REPL -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.12.0" />
+  </ItemGroup>
+</Project>

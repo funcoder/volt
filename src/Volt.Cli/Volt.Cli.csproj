@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>volt</ToolCommandName>
+    <Description>Volt Framework - CLI tool for project scaffolding and management</Description>
+    <PackageId>Volt.Cli</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Scriban" />
+  </ItemGroup>
+</Project>
