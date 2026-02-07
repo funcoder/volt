@@ -26,9 +26,9 @@ public static class VoltMiddlewareExtensions
         {
             app.UseExceptionHandler("/error");
             app.UseHsts();
+            app.UseHttpsRedirection();
         }
 
-        app.UseHttpsRedirection();
         app.UseStaticFiles();
 
         app.UseRouting();
@@ -41,6 +41,9 @@ public static class VoltMiddlewareExtensions
         app.UseAntiforgery();
 
         app.MapControllers();
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
 
         return app;
     }
