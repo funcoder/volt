@@ -25,14 +25,40 @@ public static class ModelGenerator
             ConsoleOutput.FileCreated($"Models/{modelName}.cs");
         }
 
-        GenerateMigration(context, appName, modelName, parsedFields);
+        var baseTimestamp = DateTime.UtcNow;
+        GenerateAttachmentsMigrationIfNeeded(context, appName, parsedFields, baseTimestamp);
+        GenerateMigration(context, appName, modelName, parsedFields, baseTimestamp.AddSeconds(1));
 
         ConsoleOutput.BlankLine();
         ConsoleOutput.Success($"Model '{modelName}' generated.");
     }
 
+    public static void GenerateAttachmentsMigrationIfNeeded(
+        ProjectContext context, string appName, IReadOnlyList<FieldDefinition> fields, DateTime timestamp)
+    {
+        if (!fields.Any(f => f.IsAttachment)) return;
+
+        var migrationsDir = context.ResolvePath("Migrations");
+        if (Directory.Exists(migrationsDir))
+        {
+            var existingFiles = Directory.GetFiles(migrationsDir, "*CreateVoltAttachments.cs");
+            if (existingFiles.Length > 0) return;
+        }
+
+        var migrationId = $"{timestamp:yyyyMMddHHmmss}_CreateVoltAttachments";
+        var migrationData = new { app_name = appName, migration_id = migrationId };
+        var migrationPath = context.ResolvePath(
+            "Migrations", $"{migrationId}.cs");
+
+        if (TemplateEngine.RenderToFile("Migration.Attachments", migrationData, migrationPath))
+        {
+            ConsoleOutput.FileCreated("Migrations/CreateVoltAttachments.cs");
+        }
+    }
+
     public static void GenerateMigration(
-        ProjectContext context, string appName, string modelName, IReadOnlyList<FieldDefinition> fields)
+        ProjectContext context, string appName, string modelName, IReadOnlyList<FieldDefinition> fields,
+        DateTime timestamp)
     {
         var tableName = ToTableName(modelName);
         var foreignKeys = fields
@@ -44,23 +70,31 @@ public static class ModelGenerator
             })
             .ToArray();
 
+        var attachmentKeys = fields
+            .Where(f => f.IsAttachment)
+            .Select(f => new { name = f.Name })
+            .ToArray();
+
+        var migrationId = $"{timestamp:yyyyMMddHHmmss}_Create{Pluralize(modelName)}";
         var migrationData = new
         {
             app_name = appName,
             model_name = modelName,
             model_name_plural = Pluralize(modelName),
             table_name = tableName,
+            migration_id = migrationId,
             fields = fields.Select(f => new
             {
                 name = f.Name,
-                type = f.Type,
-                nullable = f.Type == "string" ? "true" : "false",
+                type = f.IsAttachment ? "int" : f.Type,
+                nullable = (f.Type == "string" || f.IsAttachment) ? "true" : "false",
             }).ToArray(),
             foreign_keys = foreignKeys,
+            attachment_keys = attachmentKeys,
         };
 
         var migrationPath = context.ResolvePath(
-            "Migrations", $"{DateTime.UtcNow:yyyyMMddHHmmss}_Create{Pluralize(modelName)}.cs");
+            "Migrations", $"{migrationId}.cs");
 
         if (TemplateEngine.RenderToFile("Migration", migrationData, migrationPath))
         {
@@ -72,7 +106,7 @@ public static class ModelGenerator
         string appName, string modelName, IReadOnlyList<FieldDefinition> fields)
     {
         var fieldData = fields
-            .Where(f => !f.IsReference)
+            .Where(f => !f.IsReference && !f.IsAttachment)
             .Select(f => new
             {
                 name = f.Name,
@@ -90,12 +124,19 @@ public static class ModelGenerator
             })
             .ToArray();
 
+        var attachments = fields
+            .Where(f => f.IsAttachment)
+            .Select(f => new { name = f.AttachmentName! })
+            .ToArray();
+
         return new
         {
             app_name = appName,
             model_name = modelName,
             fields = fieldData,
             associations = associations,
+            has_attachments = attachments.Length > 0,
+            attachments = attachments,
         };
     }
 }

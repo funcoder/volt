@@ -1,0 +1,43 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
+using {{ app_name }}.Data;
+
+namespace {{ app_name }}.Migrations;
+
+/// <summary>
+/// Creates the volt_attachments table for file/image storage.
+/// </summary>
+[DbContext(typeof(AppDbContext))]
+[Migration("{{ migration_id }}")]
+public partial class CreateVoltAttachments : Migration
+{
+    /// <inheritdoc />
+    protected override void Up(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.CreateTable(
+            name: "volt_attachments",
+            columns: table => new
+            {
+                Id = table.Column<int>(nullable: false)
+                    .Annotation("Sqlite:Autoincrement", true),
+                Filename = table.Column<string>(nullable: false),
+                ContentType = table.Column<string>(nullable: false),
+                ByteSize = table.Column<long>(nullable: false),
+                Key = table.Column<string>(nullable: false),
+                ServiceName = table.Column<string>(nullable: false, defaultValue: "local"),
+                Checksum = table.Column<string>(nullable: true),
+                CreatedAt = table.Column<DateTime>(nullable: false),
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_volt_attachments", x => x.Id);
+            });
+    }
+
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropTable(name: "volt_attachments");
+    }
+}

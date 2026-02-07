@@ -130,7 +130,7 @@ public abstract class ResourceController<T> : Controller where T : Model<T>, new
         TempData[FlashTempDataKey] = JsonSerializer.Serialize(flashMessage);
     }
 
-    private Expression<Func<T, object?>>[] BuildPropertyIncludes()
+    protected Expression<Func<T, object?>>[] BuildPropertyIncludes()
     {
         var parameter = Expression.Parameter(typeof(T), "x");
 

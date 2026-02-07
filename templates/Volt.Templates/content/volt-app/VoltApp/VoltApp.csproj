@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Tests/**" />
+    <Content Remove="Tests/**" />
+    <None Remove="Tests/**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="VoltFramework.Core" Version="0.2.0" />
     <PackageReference Include="VoltFramework.Data" Version="0.2.0" />
     <PackageReference Include="VoltFramework.Web" Version="0.2.0" />

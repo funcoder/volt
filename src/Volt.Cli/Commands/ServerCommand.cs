@@ -90,7 +90,7 @@ public static class ServerCommand
     private static string BuildArguments(int port, bool https, bool verbose)
     {
         var scheme = https ? "https" : "http";
-        var args = $"watch run --urls \"{scheme}://localhost:{port}\"";
+        var args = $"watch run --non-interactive --urls \"{scheme}://localhost:{port}\"";
 
         if (verbose)
         {

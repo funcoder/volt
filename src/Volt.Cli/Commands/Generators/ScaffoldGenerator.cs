@@ -25,7 +25,9 @@ public static class ScaffoldGenerator
         GenerateModel(context, appName, modelName, parsedFields);
         GenerateResourceController(context, appName, modelName, controllerName, parsedFields);
         GenerateViews(context, appName, modelName, parsedFields, routePath);
-        ModelGenerator.GenerateMigration(context, appName, modelName, parsedFields);
+        var baseTimestamp = DateTime.UtcNow;
+        ModelGenerator.GenerateAttachmentsMigrationIfNeeded(context, appName, parsedFields, baseTimestamp);
+        ModelGenerator.GenerateMigration(context, appName, modelName, parsedFields, baseTimestamp.AddSeconds(1));
         GenerateTests(context, appName, modelName, controllerName, parsedFields, routePath);
 
         ConsoleOutput.BlankLine();
@@ -48,12 +50,31 @@ public static class ScaffoldGenerator
         ProjectContext context, string appName, string modelName, string controllerName,
         IReadOnlyList<FieldDefinition> fields)
     {
+        var hasAttachments = fields.Any(f => f.IsAttachment);
+
+        var permittedFields = fields
+            .Where(f => !f.IsAttachment)
+            .Select(f => new { name = f.Name, type = f.Type })
+            .ToArray();
+
+        var attachments = fields
+            .Where(f => f.IsAttachment)
+            .Select(f => new
+            {
+                name = f.AttachmentName!,
+                form_name = char.ToLowerInvariant(f.AttachmentName![0]) + f.AttachmentName[1..],
+            })
+            .ToArray();
+
         var data = new
         {
             app_name = appName,
             controller_name = controllerName,
             model_name = modelName,
             fields = fields.Select(f => new { name = f.Name, type = f.Type }).ToArray(),
+            permitted_fields = permittedFields,
+            has_attachments = hasAttachments,
+            attachments = attachments,
         };
 
         var outputPath = context.ResolvePath("Controllers", $"{controllerName}.cs");
@@ -69,10 +90,15 @@ public static class ScaffoldGenerator
         IReadOnlyList<FieldDefinition> fields, string routePath)
     {
         var viewFolder = Pluralize(modelName);
+        var hasAttachments = fields.Any(f => f.IsAttachment);
+
         var fieldData = fields.Select(f => new
         {
             name = f.Name,
             type = f.RawType,
+            is_attachment = f.IsAttachment,
+            is_image_attachment = f.IsImageAttachment,
+            attachment_name = f.AttachmentName ?? f.Name,
         }).ToArray();
 
         var viewModel = new
@@ -82,6 +108,7 @@ public static class ScaffoldGenerator
             model_name_plural = Pluralize(modelName),
             route_path = routePath,
             fields = fieldData,
+            has_attachments = hasAttachments,
         };
 
         var viewTemplates = new[] { "View.Index", "View.Show", "View.Form" };
@@ -102,7 +129,15 @@ public static class ScaffoldGenerator
         ProjectContext context, string appName, string modelName, string controllerName,
         IReadOnlyList<FieldDefinition> fields, string routePath)
     {
-        var fieldData = fields.Select(f => new
+        if (!HasTestProject(context))
+        {
+            ConsoleOutput.Warning("No test project found. Skipping test generation.");
+            return;
+        }
+
+        var nonAttachmentFields = fields.Where(f => !f.IsAttachment).ToArray();
+
+        var fieldData = nonAttachmentFields.Select(f => new
         {
             name = f.Name,
             type = f.Type,
@@ -138,5 +173,14 @@ public static class ScaffoldGenerator
         {
             ConsoleOutput.FileCreated($"Tests/Controllers/{controllerName}Test.cs");
         }
+    }
+
+    private static bool HasTestProject(ProjectContext context)
+    {
+        var testsDir = context.ResolvePath("Tests");
+        if (!Directory.Exists(testsDir)) return false;
+
+        var testCsprojs = Directory.GetFiles(testsDir, "*.Tests.csproj");
+        return testCsprojs.Length > 0;
     }
 }

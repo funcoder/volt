@@ -3,22 +3,60 @@
     ViewData["Title"] = "{{ model_name }} Details";
 }
 
-<h1>{{ model_name }} Details</h1>
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-zinc-900">{{ model_name }} Details</h1>
+</div>
 
-<div>
-    <dl class="row">
+<div class="rounded-lg border border-zinc-200 bg-white p-6">
+    <dl class="divide-y divide-zinc-100">
 {{~ for field in fields ~}}
-        <dt class="col-sm-2">{{ field.name }}</dt>
-        <dd class="col-sm-10">@Model.{{ field.name }}</dd>
+{{~ if field.is_image_attachment ~}}
+        <div class="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-zinc-500">{{ field.attachment_name }}</dt>
+            <dd class="mt-1 text-sm text-zinc-900 sm:col-span-2 sm:mt-0">
+                @if (Model.{{ field.attachment_name }} != null)
+                {
+                    <img src="@Url.Content($"~/uploads/{Model.{{ field.attachment_name }}.Key}")" alt="" class="max-w-xs rounded" />
+                }
+                else
+                {
+                    <span class="text-zinc-400">No image</span>
+                }
+            </dd>
+        </div>
+{{~ else if field.is_attachment ~}}
+        <div class="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-zinc-500">{{ field.attachment_name }}</dt>
+            <dd class="mt-1 text-sm text-zinc-900 sm:col-span-2 sm:mt-0">
+                @if (Model.{{ field.attachment_name }} != null)
+                {
+                    <a href="@Url.Content($"~/uploads/{Model.{{ field.attachment_name }}.Key}")" class="text-brand-600 hover:text-brand-800" download>@Model.{{ field.attachment_name }}.Filename</a>
+                }
+                else
+                {
+                    <span class="text-zinc-400">No file</span>
+                }
+            </dd>
+        </div>
+{{~ else ~}}
+        <div class="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-zinc-500">{{ field.name }}</dt>
+            <dd class="mt-1 text-sm text-zinc-900 sm:col-span-2 sm:mt-0">@Model.{{ field.name }}</dd>
+        </div>
 {{~ end ~}}
-        <dt class="col-sm-2">Created</dt>
-        <dd class="col-sm-10">@Model.CreatedAt</dd>
-        <dt class="col-sm-2">Updated</dt>
-        <dd class="col-sm-10">@Model.UpdatedAt</dd>
+{{~ end ~}}
+        <div class="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-zinc-500">Created</dt>
+            <dd class="mt-1 text-sm text-zinc-900 sm:col-span-2 sm:mt-0">@Model.CreatedAt</dd>
+        </div>
+        <div class="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+            <dt class="text-sm font-medium text-zinc-500">Updated</dt>
+            <dd class="mt-1 text-sm text-zinc-900 sm:col-span-2 sm:mt-0">@Model.UpdatedAt</dd>
+        </div>
     </dl>
 </div>
 
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="mt-4 flex items-center gap-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-700">Edit</a>
+    <a asp-action="Index" class="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50">Back to List</a>
 </div>

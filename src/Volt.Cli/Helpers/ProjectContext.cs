@@ -6,7 +6,7 @@ namespace Volt.Cli.Helpers;
 /// </summary>
 public sealed class ProjectContext
 {
-    private const string VoltPackagePrefix = "Volt.";
+    private const string VoltPackagePrefix = "VoltFramework.";
     private const string CsprojExtension = ".csproj";
 
     private ProjectContext(string projectRoot, string csprojPath)

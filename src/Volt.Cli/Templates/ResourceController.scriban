@@ -1,6 +1,11 @@
 using {{ app_name }}.Models;
 using Volt.Data;
 using Volt.Web.Controllers;
+{{~ if has_attachments ~}}
+using Volt.Storage;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+{{~ end ~}}
 
 namespace {{ app_name }}.Controllers;
 
@@ -13,10 +18,98 @@ public class {{ controller_name }} : ResourceController<{{ model_name }}>
     /// <inheritdoc />
     public override string[] PermittedParams { get; } =
     [
-{{~ for field in fields ~}}
+{{~ for field in permitted_fields ~}}
         "{{ field.name }}",
 {{~ end ~}}
     ];
+{{~ if has_attachments ~}}
+
+    private readonly IStorageService _storage;
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="{{ controller_name }}"/>.
+    /// </summary>
+    public {{ controller_name }}(VoltDbContext db, IStorageService storage) : base(db)
+    {
+        _storage = storage;
+    }
+
+    /// <inheritdoc />
+    [HttpGet]
+    public override async Task<IActionResult> Index()
+    {
+        var items = await Db.Set<{{ model_name }}>()
+{{~ for att in attachments ~}}
+            .Include(e => e.{{ att.name }})
+{{~ end ~}}
+            .AsNoTracking()
+            .ToListAsync();
+        return View(items);
+    }
+
+    /// <inheritdoc />
+    protected override async Task<{{ model_name }}?> Find(int id) =>
+        await Db.Set<{{ model_name }}>()
+{{~ for att in attachments ~}}
+            .Include(e => e.{{ att.name }})
+{{~ end ~}}
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+    /// <inheritdoc />
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public override async Task<IActionResult> Create()
+    {
+        var entity = new {{ model_name }}();
+
+        if (!await TryUpdateModelAsync(entity, string.Empty, BuildPropertyIncludes()))
+            return View("New", entity);
+
+        if (!ModelState.IsValid)
+            return View("New", entity);
+
+        Db.Set<{{ model_name }}>().Add(entity);
+        await ProcessAttachments(entity);
+
+        await Db.SaveChangesAsync();
+        Flash("Created successfully.", Volt.Core.Flash.FlashMessageType.Success);
+        return RedirectTo(entity);
+    }
+
+    /// <inheritdoc />
+    [HttpPut("{id:int}")]
+    [ValidateAntiForgeryToken]
+    public override async Task<IActionResult> Update(int id)
+    {
+        var entity = await Find(id);
+        if (entity is null) return NotFound();
+
+        if (!await TryUpdateModelAsync(entity, string.Empty, BuildPropertyIncludes()))
+            return View("Edit", entity);
+
+        if (!ModelState.IsValid)
+            return View("Edit", entity);
+
+        await ProcessAttachments(entity);
+
+        await Db.SaveChangesAsync();
+        Flash("Updated successfully.", Volt.Core.Flash.FlashMessageType.Success);
+        return RedirectTo(entity);
+    }
+
+    private async Task ProcessAttachments({{ model_name }} entity)
+    {
+{{~ for att in attachments ~}}
+        var {{ att.form_name }}File = Request.Form.Files.GetFile("{{ att.name }}");
+        if ({{ att.form_name }}File is { Length: > 0 })
+        {
+            using var stream = {{ att.form_name }}File.OpenReadStream();
+            var attachment = await _storage.Store(stream, {{ att.form_name }}File.FileName, {{ att.form_name }}File.ContentType);
+            Db.Entry(entity).Property(e => e.{{ att.name }}Id).CurrentValue = attachment.Id;
+        }
+{{~ end ~}}
+    }
+{{~ else ~}}
 
     /// <summary>
     /// Initializes a new instance of <see cref="{{ controller_name }}"/>.
@@ -24,4 +117,5 @@ public class {{ controller_name }} : ResourceController<{{ model_name }}>
     public {{ controller_name }}(VoltDbContext db) : base(db)
     {
     }
+{{~ end ~}}
 }

@@ -1,3 +1,4 @@
+using Xunit;
 using {{ app_name }}.Models;
 
 namespace {{ app_name }}.Tests.Models;

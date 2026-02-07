@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Volt.Data;
+using Volt.Storage;
 
 namespace VoltApp.Data;
 
@@ -8,6 +9,8 @@ public class AppDbContext : VoltDbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
+
+    public DbSet<VoltAttachment> VoltAttachments => Set<VoltAttachment>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

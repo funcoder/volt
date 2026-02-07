@@ -19,5 +19,6 @@
 
     <!-- Versioning -->
     <VersionPrefix>0.2.0</VersionPrefix>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 </Project>

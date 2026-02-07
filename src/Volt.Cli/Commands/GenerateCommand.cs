@@ -24,6 +24,7 @@ public static class GenerateCommand
         command.Add(CreateJobSubcommand());
         command.Add(CreateMailerSubcommand());
         command.Add(CreateChannelSubcommand());
+        command.Add(CreateAiContextSubcommand());
 
         return command;
     }
@@ -157,6 +158,19 @@ public static class GenerateCommand
         cmd.SetAction((parseResult, _) =>
         {
             SimpleGenerators.GenerateChannel(parseResult.GetValue(nameArg)!);
+            return Task.CompletedTask;
+        });
+
+        return cmd;
+    }
+
+    private static Command CreateAiContextSubcommand()
+    {
+        var cmd = new Command("ai-context", "Generate AI assistant context files (CLAUDE.md, .cursorrules, copilot-instructions.md)");
+
+        cmd.SetAction((_, _) =>
+        {
+            AiContextGenerator.Generate();
             return Task.CompletedTask;
         });
 

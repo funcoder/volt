@@ -1,3 +1,8 @@
+using Volt.Core;
+{{~ if has_attachments ~}}
+using Volt.Storage;
+{{~ end ~}}
+
 namespace {{ app_name }}.Models;
 
 /// <summary>
@@ -10,5 +15,9 @@ public class {{ model_name }} : Model<{{ model_name }}>
 {{~ end ~}}
 {{~ for assoc in associations ~}}
     public {{ assoc.type }} {{ assoc.name }} { get; init; } = null!;
+{{~ end ~}}
+{{~ for att in attachments ~}}
+    public int? {{ att.name }}Id { get; init; }
+    public VoltAttachment? {{ att.name }} { get; init; }
 {{~ end ~}}
 }

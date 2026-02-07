@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Volt.Cli.Helpers;
 
 /// <summary>
@@ -7,7 +9,7 @@ namespace Volt.Cli.Helpers;
 /// </summary>
 public static class ConsoleOutput
 {
-    private const string VoltBanner = """
+    private const string VoltArt = """
 
         __     __    _ _
         \ \   / /__ | | |_
@@ -15,16 +17,41 @@ public static class ConsoleOutput
           \ V / (_) | | |_
            \_/ \___/|_|\__|
 
-        Rails-like framework for .NET
-
         """;
 
     /// <summary>
-    /// Displays the Volt ASCII art banner in cyan.
+    /// Gets the Volt CLI version from the assembly informational version.
+    /// Falls back to the assembly version if informational version is not set.
+    /// </summary>
+    public static string GetVersion()
+    {
+        var assembly = typeof(ConsoleOutput).Assembly;
+        var infoVersion = assembly
+            .GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion;
+
+        if (infoVersion is not null)
+        {
+            var plusIndex = infoVersion.IndexOf('+');
+            if (plusIndex > 0)
+            {
+                return infoVersion[..plusIndex];
+            }
+
+            return infoVersion;
+        }
+
+        return assembly.GetName().Version?.ToString(3) ?? "0.0.0";
+    }
+
+    /// <summary>
+    /// Displays the Volt ASCII art banner with version in cyan.
     /// </summary>
     public static void Banner()
     {
-        WriteColored(VoltBanner, ConsoleColor.Cyan);
+        WriteColored(VoltArt, ConsoleColor.Cyan);
+        WriteColored($"        v{GetVersion()} — Rails-like framework for .NET", ConsoleColor.Cyan);
+        Console.WriteLine();
     }
 
     /// <summary>

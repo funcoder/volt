@@ -1,10 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using {{ app_name }}.Data;
 
 namespace {{ app_name }}.Migrations;
 
 /// <summary>
 /// Creates the {{ table_name }} table.
 /// </summary>
+[DbContext(typeof(AppDbContext))]
+[Migration("{{ migration_id }}")]
 public partial class Create{{ model_name_plural }} : Migration
 {
     /// <inheritdoc />
@@ -33,6 +38,14 @@ public partial class Create{{ model_name_plural }} : Migration
                     principalTable: "{{ field.referenced_table }}",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
+{{~ end ~}}
+{{~ for field in attachment_keys ~}}
+                table.ForeignKey(
+                    name: "FK_{{ table_name }}_volt_attachments_{{ field.name }}",
+                    column: x => x.{{ field.name }},
+                    principalTable: "volt_attachments",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.SetNull);
 {{~ end ~}}
             });
     }

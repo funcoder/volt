@@ -16,6 +16,8 @@ public static class FieldParser
             ["decimal"] = "decimal",
             ["datetime"] = "DateTime",
             ["references"] = "int",
+            ["image"] = "int?",
+            ["file"] = "int?",
         };
 
     private static readonly IReadOnlyDictionary<string, string> EfTypeMappings =
@@ -28,14 +30,17 @@ public static class FieldParser
             ["decimal"] = "decimal(18,2)",
             ["datetime"] = "datetime2",
             ["references"] = "int",
+            ["image"] = "int",
+            ["file"] = "int",
         };
+
+    private static readonly HashSet<string> AttachmentTypes =
+        new(StringComparer.OrdinalIgnoreCase) { "image", "file" };
 
     /// <summary>
     /// Parses an array of "name:type" field strings into structured field definitions.
     /// Defaults to "string" when no type is specified.
     /// </summary>
-    /// <param name="fieldArgs">The field arguments (e.g., "title:string", "age:int", "author:references").</param>
-    /// <returns>A list of parsed field definitions.</returns>
     public static IReadOnlyList<FieldDefinition> Parse(string[] fieldArgs)
     {
         var fields = new List<FieldDefinition>();
@@ -53,15 +58,22 @@ public static class FieldParser
             }
 
             var isReference = rawType.Equals("references", StringComparison.OrdinalIgnoreCase);
-            var fieldName = isReference ? $"{name}Id" : name;
+            var isAttachment = AttachmentTypes.Contains(rawType);
+            var isImageAttachment = rawType.Equals("image", StringComparison.OrdinalIgnoreCase);
+
+            var fieldName = isReference ? $"{name}Id" : isAttachment ? $"{name}Id" : name;
             var referencedModel = isReference ? name : null;
+            var attachmentName = isAttachment ? name : null;
 
             fields.Add(new FieldDefinition(
                 Name: fieldName,
                 Type: csharpType,
                 RawType: rawType,
                 IsReference: isReference,
-                ReferencedModel: referencedModel));
+                ReferencedModel: referencedModel,
+                IsAttachment: isAttachment,
+                IsImageAttachment: isImageAttachment,
+                AttachmentName: attachmentName));
         }
 
         return fields;
@@ -70,8 +82,6 @@ public static class FieldParser
     /// <summary>
     /// Gets the EF Core column type for a given field raw type.
     /// </summary>
-    /// <param name="rawType">The raw type string from the CLI (e.g., "text", "decimal").</param>
-    /// <returns>The EF Core column type string.</returns>
     public static string GetEfColumnType(string rawType)
     {
         return EfTypeMappings.TryGetValue(rawType, out var efType)
@@ -86,7 +96,6 @@ public static class FieldParser
             return input;
         }
 
-        // Handle snake_case
         if (input.Contains('_'))
         {
             var parts = input.Split('_', StringSplitOptions.RemoveEmptyEntries);
@@ -115,9 +124,15 @@ public static class FieldParser
 /// <param name="RawType">The original type string from the CLI.</param>
 /// <param name="IsReference">Whether this field is a foreign key reference.</param>
 /// <param name="ReferencedModel">The referenced model name if this is a reference field.</param>
+/// <param name="IsAttachment">Whether this field is a file/image attachment.</param>
+/// <param name="IsImageAttachment">Whether this field is specifically an image attachment.</param>
+/// <param name="AttachmentName">The navigation property name for the attachment.</param>
 public sealed record FieldDefinition(
     string Name,
     string Type,
     string RawType,
     bool IsReference,
-    string? ReferencedModel);
+    string? ReferencedModel,
+    bool IsAttachment = false,
+    bool IsImageAttachment = false,
+    string? AttachmentName = null);

@@ -8,293 +8,100 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VoltApp</title>
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: #09090b;
-            color: #a1a1aa;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                    },
+                },
+            },
         }
-
-        .container {
-            width: 100%;
-            max-width: 640px;
-            padding: 3rem 1.5rem;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .logo {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 1.25rem;
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo svg {
-            width: 26px;
-            height: 26px;
-            fill: #09090b;
-        }
-
-        .brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-            color: #fafafa;
-            margin-bottom: 0.25rem;
-        }
-
-        .version {
-            font-size: 0.75rem;
-            color: #52525b;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        .tagline {
-            font-size: 0.9375rem;
-            color: #71717a;
-            line-height: 1.6;
-        }
-
-        .tagline code {
-            font-size: 0.8125rem;
-            color: #a1a1aa;
-            background: #18181b;
-            padding: 0.125rem 0.375rem;
-            border-radius: 4px;
-            border: 1px solid #27272a;
-        }
-
-        .divider {
-            height: 1px;
-            background: #27272a;
-            margin: 2rem 0;
-        }
-
-        .section-label {
-            font-size: 0.6875rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: #d97706;
-            margin-bottom: 1rem;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-            margin-bottom: 0;
-        }
-
-        .card {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.875rem;
-            padding: 0.875rem 1rem;
-            background: #18181b;
-            border: 1px solid #27272a;
-            border-radius: 8px;
-            transition: border-color 0.15s ease;
-        }
-
-        .card:hover { border-color: #3f3f46; }
-
-        .card-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            background: #27272a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        .card-icon svg {
-            width: 16px;
-            height: 16px;
-            stroke: #d97706;
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .card-content h3 {
-            font-size: 0.8125rem;
-            font-weight: 600;
-            color: #e4e4e7;
-            margin-bottom: 0.125rem;
-        }
-
-        .card-content p {
-            font-size: 0.8125rem;
-            color: #71717a;
-            line-height: 1.5;
-        }
-
-        .card-content code {
-            font-size: 0.75rem;
-            color: #d97706;
-            background: #1c1917;
-            padding: 0.0625rem 0.3125rem;
-            border-radius: 3px;
-            border: 1px solid #292524;
-        }
-
-        .steps {
-            counter-reset: step;
-        }
-
-        .step {
-            display: flex;
-            align-items: baseline;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-        }
-
-        .step + .step {
-            border-top: 1px solid #1c1c1f;
-        }
-
-        .step::before {
-            counter-increment: step;
-            content: counter(step);
-            font-size: 0.6875rem;
-            font-weight: 700;
-            color: #09090b;
-            background: #d97706;
-            width: 1.25rem;
-            height: 1.25rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .step-text {
-            font-size: 0.8125rem;
-            color: #a1a1aa;
-            line-height: 1.5;
-        }
-
-        .step-text code {
-            font-size: 0.75rem;
-            color: #f59e0b;
-            background: #1c1917;
-            padding: 0.0625rem 0.3125rem;
-            border-radius: 3px;
-            border: 1px solid #292524;
-        }
-
-        .footer {
-            text-align: center;
-            padding-top: 2rem;
-        }
-
-        .footer a {
-            font-size: 0.75rem;
-            color: #3f3f46;
-            text-decoration: none;
-            transition: color 0.15s ease;
-        }
-
-        .footer a:hover { color: #d97706; }
-
-        .footer a + a { margin-left: 1.25rem; }
-
-        @@media (max-width: 480px) {
-            .container { padding: 2rem 1rem; }
-        }
-    </style>
+    </script>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">
-                <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+<body class="bg-zinc-950 text-zinc-400 min-h-screen flex items-center justify-center antialiased">
+    <div class="w-full max-w-xl px-6 py-12">
+        <div class="text-center mb-12">
+            <div class="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600">
+                <svg class="h-6 w-6 fill-zinc-950" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             </div>
-            <div class="brand">VoltApp</div>
-            <div class="version">Volt Framework v0.2.0</div>
-            <p class="tagline">
+            <h1 class="text-2xl font-bold tracking-tight text-zinc-50 mb-1">VoltApp</h1>
+            <p class="text-xs font-medium uppercase tracking-widest text-zinc-600 mb-4">Volt Framework v0.2.0</p>
+            <p class="text-sm leading-relaxed text-zinc-500">
                 You're running on Volt &mdash; a Rails-like framework for .NET.<br />
-                Served from <code>Controllers/HomeController.cs</code>
+                Served from <code class="rounded border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 text-xs text-zinc-400">Controllers/HomeController.cs</code>
             </p>
         </div>
 
-        <div class="section-label">Quick Actions</div>
-        <div class="cards">
-            <div class="card">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-amber-600">Quick Actions</p>
+        <div class="space-y-2 mb-0">
+            <div class="flex items-start gap-3.5 rounded-lg border border-zinc-800 bg-zinc-900 p-3.5 transition hover:border-zinc-700">
+                <div class="mt-px flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-zinc-800">
+                    <svg class="h-4 w-4 stroke-amber-600" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
                 </div>
-                <div class="card-content">
-                    <h3>Generate a Scaffold</h3>
-                    <p>Full CRUD in one command: <code>volt generate scaffold Post title:string body:text</code></p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
-                </div>
-                <div class="card-content">
-                    <h3>Run Migrations</h3>
-                    <p>Apply database changes: <code>volt db:migrate</code></p>
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-200 mb-0.5">Generate a Scaffold</h3>
+                    <p class="text-sm text-zinc-500">Full CRUD in one command: <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-600">volt generate scaffold Post title:string body:text</code></p>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+            <div class="flex items-start gap-3.5 rounded-lg border border-zinc-800 bg-zinc-900 p-3.5 transition hover:border-zinc-700">
+                <div class="mt-px flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-zinc-800">
+                    <svg class="h-4 w-4 stroke-amber-600" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
                 </div>
-                <div class="card-content">
-                    <h3>Convention Routing</h3>
-                    <p>Controllers are auto-discovered with RESTful routes</p>
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-200 mb-0.5">Run Migrations</h3>
+                    <p class="text-sm text-zinc-500">Apply database changes: <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-600">volt db:migrate</code></p>
+                </div>
+            </div>
+            <div class="flex items-start gap-3.5 rounded-lg border border-zinc-800 bg-zinc-900 p-3.5 transition hover:border-zinc-700">
+                <div class="mt-px flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-zinc-800">
+                    <svg class="h-4 w-4 stroke-amber-600" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-200 mb-0.5">Convention Routing</h3>
+                    <p class="text-sm text-zinc-500">Controllers are auto-discovered with RESTful routes</p>
                 </div>
             </div>
         </div>
 
-        <div class="divider"></div>
+        <div class="my-8 h-px bg-zinc-800"></div>
 
-        <div class="section-label">Getting Started</div>
-        <div class="steps">
-            <div class="step">
-                <span class="step-text">Generate your first resource: <code>volt generate scaffold Article title:string body:text published:bool</code></span>
-            </div>
-            <div class="step">
-                <span class="step-text">Run the migration: <code>volt db:migrate</code></span>
-            </div>
-            <div class="step">
-                <span class="step-text">Browse to <code>/articles</code> and start building</span>
-            </div>
-            <div class="step">
-                <span class="step-text">Edit <code>Views/Home/Index.cshtml</code> to replace this page</span>
-            </div>
-        </div>
+        <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-amber-600">Getting Started</p>
+        <ol class="list-none counter-reset space-y-0">
+            <li class="flex items-baseline gap-3 py-2">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-[11px] font-bold text-zinc-950">1</span>
+                <span class="text-sm text-zinc-400 leading-relaxed">Generate your first resource: <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-500">volt generate scaffold Article title:string body:text published:bool</code></span>
+            </li>
+            <li class="flex items-baseline gap-3 border-t border-zinc-900 py-2">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-[11px] font-bold text-zinc-950">2</span>
+                <span class="text-sm text-zinc-400 leading-relaxed">Run the migration: <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-500">volt db:migrate</code></span>
+            </li>
+            <li class="flex items-baseline gap-3 border-t border-zinc-900 py-2">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-[11px] font-bold text-zinc-950">3</span>
+                <span class="text-sm text-zinc-400 leading-relaxed">Browse to <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-500">/articles</code> and start building</span>
+            </li>
+            <li class="flex items-baseline gap-3 border-t border-zinc-900 py-2">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-[11px] font-bold text-zinc-950">4</span>
+                <span class="text-sm text-zinc-400 leading-relaxed">Edit <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-500">Views/Home/Index.cshtml</code> to replace this page</span>
+            </li>
+        </ol>
 
-        <div class="footer">
-            <a href="https://github.com/funcoder/volt">GitHub</a>
-            <a href="https://github.com/funcoder/volt#readme">Docs</a>
+        <div class="pt-8 text-center">
+            <a href="https://github.com/funcoder/volt" class="text-xs text-zinc-600 hover:text-amber-600 transition">GitHub</a>
+            <a href="https://github.com/funcoder/volt#readme" class="ml-5 text-xs text-zinc-600 hover:text-amber-600 transition">Docs</a>
         </div>
     </div>
 </body>

@@ -82,6 +82,7 @@ public static class NamingConventions
     {
         "string" => "\"Test\"",
         "int" => "1",
+        "int?" => "null",
         "bool" => "true",
         "decimal" => "1.0m",
         "DateTime" => "DateTime.UtcNow",

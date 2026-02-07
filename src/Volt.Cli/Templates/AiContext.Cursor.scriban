@@ -1,0 +1,46 @@
+This is a Volt Framework project (.NET, Rails-like conventions).
+App name: {{ app_name }}
+
+Project structure:
+- Controllers/ - RESTful resource controllers inheriting ResourceController<T>
+- Models/ - Domain models with init-only properties and soft-delete
+- Views/ - Razor views using Tailwind CSS (CDN) and HTMX
+- Data/ - AppDbContext inheriting VoltDbContext
+- Migrations/ - Timestamp-prefixed EF Core migrations
+- Jobs/, Mailers/, Channels/, Services/, Seeds/
+{{~ if models.size > 0 ~}}
+
+Models:
+{{~ for model in models ~}}
+- {{ model.name }} → {{ model.table }} ({{ model.fields }})
+{{~ end ~}}
+{{~ end ~}}
+{{~ if routes.size > 0 ~}}
+
+Routes:
+{{~ for route in routes ~}}
+- {{ route.path }} → {{ route.controller }}
+{{~ end ~}}
+{{~ end ~}}
+
+CLI commands:
+- volt server - Start dev server with hot reload
+- volt generate scaffold <Name> <fields...> - Full CRUD
+- volt generate model <Name> <fields...> - Model + migration
+- volt generate controller <Name> - Empty controller
+- volt generate ai-context - Regenerate this file
+- volt db:migrate / db:rollback / db:seed
+
+Field types: string, text, int, bool, decimal, datetime, references (FK), image (upload), file (upload)
+
+Naming: Models=PascalCase singular, Controllers=PascalCase plural+Controller,
+Tables=snake_case plural, Columns=snake_case, Routes=snake_case plural
+
+Key patterns:
+- Immutable models: init setters, `with` expressions
+- Soft delete: DeletedAt column, auto-filtered
+- Flash messages: Flash.Success("msg")
+- PermittedParams: string[] whitelist
+- HTMX: hx-boost="true"
+- Tailwind CSS via CDN, amber brand color
+- File uploads via IStorageService and VoltAttachment
