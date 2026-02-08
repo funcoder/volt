@@ -6,12 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="VoltFramework.Core" Version="0.2.0" />
-    <PackageReference Include="VoltFramework.Data" Version="0.2.0" />
-    <PackageReference Include="VoltFramework.Web" Version="0.2.0" />
-    <PackageReference Include="VoltFramework.Auth" Version="0.2.0" />
-    <PackageReference Include="VoltFramework.Jobs" Version="0.2.0" />
-    <PackageReference Include="VoltFramework.Core.Generators" Version="0.2.0" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <PackageReference Include="VoltFramework.Core" Version="0.2.1" />
+    <PackageReference Include="VoltFramework.Data" Version="0.2.1" />
+    <PackageReference Include="VoltFramework.Web" Version="0.2.1" />
+    <PackageReference Include="VoltFramework.Auth" Version="0.2.1" />
+    <PackageReference Include="VoltFramework.Jobs" Version="0.2.1" />
+    <PackageReference Include="VoltFramework.Core.Generators" Version="0.2.1" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" PrivateAssets="all" />
     <!--#if (useSqlite) -->
