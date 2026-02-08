@@ -183,6 +183,87 @@ Every model automatically gets:
 - `DeletedAt` (soft-delete support)
 - Registered as a `DbSet<T>` on the DbContext
 
+### Model Lifecycle Callbacks
+
+Models can opt into Rails-like lifecycle hooks by implementing callback interfaces. Callbacks are type-safe, IDE-discoverable, and add zero overhead to models that don't use them.
+
+```csharp
+// Models/Article.cs
+public class Article : Model<Article>, IBeforeSave, IAfterCreate
+{
+    public string Title { get; init; } = "";
+    public string Slug { get; init; } = "";
+    public string Body { get; init; } = "";
+
+    public Task BeforeSaveAsync(CancellationToken cancellationToken = default)
+    {
+        // Auto-generate slug from title on every save
+        if (!string.IsNullOrEmpty(Title))
+        {
+            var slug = Title.ToLower().Replace(" ", "-");
+            // Use EF Core's change tracking to set the value
+        }
+        return Task.CompletedTask;
+    }
+
+    public Task AfterCreateAsync(CancellationToken cancellationToken = default)
+    {
+        // Send notification, update cache, etc.
+        return Task.CompletedTask;
+    }
+}
+```
+
+Available callback interfaces:
+
+| Interface | Fires On | Use Cases |
+|-----------|----------|-----------|
+| `IBeforeSave` | Create & Update, before save | Normalization, slug generation, computed fields |
+| `IAfterSave` | Create & Update, after save | Cache invalidation, logging |
+| `IBeforeCreate` | Create only, before save | Default values, pre-creation setup |
+| `IAfterCreate` | Create only, after save | Welcome emails, notifications |
+| `IBeforeUpdate` | Update only, before save | Audit logging, change tracking |
+| `IAfterUpdate` | Update only, after save | Search reindex, webhooks |
+| `IBeforeDestroy` | Delete, before save | Cleanup checks, cascade prevention |
+| `IAfterDestroy` | Delete, after save | File cleanup, association cleanup |
+
+Execution order for a create: `BeforeSave` → `BeforeCreate` → DB save → `AfterCreate` → `AfterSave`
+
+Common patterns:
+
+```csharp
+// Normalize email on every save
+public class User : Model<User>, IBeforeSave
+{
+    public string Email { get; init; } = "";
+
+    public Task BeforeSaveAsync(CancellationToken cancellationToken = default)
+    {
+        // Normalize email to lowercase
+        return Task.CompletedTask;
+    }
+}
+
+// Prevent deletion when there are dependencies
+public class Category : Model<Category>, IBeforeDestroy
+{
+    public Task BeforeDestroyAsync(CancellationToken cancellationToken = default)
+    {
+        // Throw to abort the delete
+        throw new InvalidOperationException("Cannot delete category with articles");
+    }
+}
+```
+
+Callbacks are enabled by default. To disable globally:
+
+```csharp
+public static void Configure(VoltDbOptions db)
+{
+    db.Callbacks(false);
+}
+```
+
 ### Controllers
 
 `ResourceController<T>` provides full CRUD with strong parameters and flash messages:
