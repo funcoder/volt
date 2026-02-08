@@ -1,0 +1,87 @@
+# VoltApp
+
+A web application built with the Volt Framework (.NET, Rails-like conventions).
+
+## Project Structure
+
+```
+Controllers/     MVC controllers (RESTful resource controllers)
+Models/          Domain models (init-only properties, soft-delete)
+Views/           Razor views (Tailwind CSS via CDN, HTMX)
+Data/            AppDbContext (inherits VoltDbContext)
+Migrations/      EF Core migrations (timestamp-prefixed)
+Jobs/            Background jobs
+Mailers/         Email mailers
+Channels/        Real-time channels
+Services/        Application services
+Seeds/           Database seed data
+wwwroot/         Static files
+```
+
+## CLI Commands
+
+```bash
+volt server                    # Start dev server (hot reload)
+volt generate scaffold Post title:string body:text published:bool
+volt generate model Comment body:text post:references
+volt generate controller Api::Health
+volt generate job SendEmail
+volt generate mailer Welcome
+volt generate channel Chat
+volt generate migration AddSlugToPosts
+volt generate ai-context       # Regenerate AI context files
+volt db migrate                # Apply pending migrations
+volt db rollback               # Rollback last migration
+volt db seed                   # Run database seeds
+```
+
+## Field Types
+
+| CLI Type     | C# Type    | Notes                        |
+|-------------|------------|------------------------------|
+| string      | string     | Default type                 |
+| text        | string     | Textarea in forms            |
+| int         | int        |                              |
+| bool        | bool       | Checkbox in forms            |
+| decimal     | decimal    |                              |
+| datetime    | DateTime   |                              |
+| references  | int        | Foreign key (e.g. post:references) |
+| image       | int?       | Image upload with preview    |
+| file        | int?       | File upload with download    |
+
+## Naming Conventions
+
+- Models: PascalCase singular (`Post`, `BlogPost`)
+- Controllers: PascalCase plural + Controller (`PostsController`)
+- Table names: snake_case plural (`posts`, `blog_posts`)
+- Column names: snake_case (`created_at`, `first_name`)
+- Routes: snake_case plural (`/posts`, `/blog_posts`)
+
+## ResourceController Actions
+
+| HTTP Method | Path              | Action  | Purpose       |
+|------------|-------------------|---------|---------------|
+| GET        | /resources        | Index   | List all      |
+| GET        | /resources/new    | New     | New form      |
+| POST       | /resources        | Create  | Create record |
+| GET        | /resources/:id    | Show    | Show one      |
+| GET        | /resources/:id/edit | Edit  | Edit form     |
+| PUT/PATCH  | /resources/:id    | Update  | Update record |
+| DELETE     | /resources/:id    | Destroy | Delete record |
+
+## Key Patterns
+
+- **Immutable models**: Properties use `init` setters; use `with` expressions to create copies
+- **Soft delete**: Models have `DeletedAt`; queries auto-filter deleted records
+- **Flash messages**: `Flash.Success("Created!")` in controllers
+- **PermittedParams**: Whitelist of allowed form fields per controller
+- **HTMX**: `hx-boost="true"` on body for SPA-like navigation
+- **Tailwind CSS**: Loaded via CDN; brand color is amber
+
+## Build & Run
+
+```bash
+dotnet build          # Build the project
+dotnet test           # Run tests
+volt server           # Start with hot reload
+```
