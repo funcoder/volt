@@ -38,6 +38,12 @@ public sealed class VoltDbOptions
     public bool UseSnakeCaseColumns { get; private set; } = true;
 
     /// <summary>
+    /// Whether to run model lifecycle callbacks (IBeforeSave, IAfterCreate, etc.).
+    /// Defaults to <c>true</c>.
+    /// </summary>
+    public bool UseCallbacks { get; private set; } = true;
+
+    /// <summary>
     /// The database connection string. When <c>null</c>, the provider default is used.
     /// </summary>
     public string? ConnectionString { get; private set; }
@@ -105,6 +111,17 @@ public sealed class VoltDbOptions
     public VoltDbOptions SnakeCase(bool enabled = true)
     {
         UseSnakeCaseColumns = enabled;
+        return this;
+    }
+
+    /// <summary>
+    /// Enables or disables model lifecycle callbacks.
+    /// </summary>
+    /// <param name="enabled">Whether to run callbacks.</param>
+    /// <returns>This options instance for fluent chaining.</returns>
+    public VoltDbOptions Callbacks(bool enabled = true)
+    {
+        UseCallbacks = enabled;
         return this;
     }
 }

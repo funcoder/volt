@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Options;
 using Volt.Core;
 using Volt.Core.Conventions;
+using Volt.Data.Callbacks;
 using Volt.Data.Conventions;
 
 namespace Volt.Data;
@@ -15,6 +16,7 @@ namespace Volt.Data;
 public abstract class VoltDbContext : DbContext
 {
     private readonly VoltDbOptions _voltOptions;
+    private readonly CallbackRunner _callbackRunner = new();
 
     /// <summary>
     /// Initializes a new <see cref="VoltDbContext"/> with the specified EF Core and Volt options.
@@ -59,7 +61,7 @@ public abstract class VoltDbContext : DbContext
                 }
             }
 
-            if (!IsVoltModel(entityType.ClrType))
+            if (!VoltModelHelper.IsVoltModel(entityType.ClrType))
             {
                 continue;
             }
@@ -75,21 +77,39 @@ public abstract class VoltDbContext : DbContext
     /// <summary>
     /// Saves all changes, automatically setting CreatedAt and UpdatedAt timestamps
     /// on tracked <see cref="Model{T}"/> entities when timestamps are enabled.
+    /// Runs lifecycle callbacks when enabled.
     /// </summary>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>The number of state entries written to the database.</returns>
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         if (_voltOptions.UseTimestamps)
         {
             ApplyTimestamps();
         }
 
-        return base.SaveChangesAsync(cancellationToken);
+        if (_voltOptions.UseCallbacks)
+        {
+            await _callbackRunner.RunBeforeCallbacksAsync(ChangeTracker, cancellationToken);
+        }
+
+        var snapshot = _voltOptions.UseCallbacks
+            ? CallbackRunner.SnapshotTrackedEntities(ChangeTracker)
+            : null;
+
+        var result = await base.SaveChangesAsync(cancellationToken);
+
+        if (_voltOptions.UseCallbacks && snapshot is { Count: > 0 })
+        {
+            await _callbackRunner.RunAfterCallbacksAsync(snapshot, cancellationToken);
+        }
+
+        return result;
     }
 
     /// <summary>
     /// Saves all changes synchronously, automatically setting timestamps when enabled.
+    /// Runs lifecycle callbacks when enabled.
     /// </summary>
     /// <returns>The number of state entries written to the database.</returns>
     public override int SaveChanges()
@@ -99,7 +119,25 @@ public abstract class VoltDbContext : DbContext
             ApplyTimestamps();
         }
 
-        return base.SaveChanges();
+        if (_voltOptions.UseCallbacks)
+        {
+            _callbackRunner.RunBeforeCallbacksAsync(ChangeTracker, CancellationToken.None)
+                .GetAwaiter().GetResult();
+        }
+
+        var snapshot = _voltOptions.UseCallbacks
+            ? CallbackRunner.SnapshotTrackedEntities(ChangeTracker)
+            : null;
+
+        var result = base.SaveChanges();
+
+        if (_voltOptions.UseCallbacks && snapshot is { Count: > 0 })
+        {
+            _callbackRunner.RunAfterCallbacksAsync(snapshot, CancellationToken.None)
+                .GetAwaiter().GetResult();
+        }
+
+        return result;
     }
 
     private void ApplyTimestamps()
@@ -108,7 +146,7 @@ public abstract class VoltDbContext : DbContext
 
         foreach (var entry in ChangeTracker.Entries())
         {
-            if (!IsVoltModel(entry.Entity.GetType()))
+            if (!VoltModelHelper.IsVoltModel(entry.Entity.GetType()))
             {
                 continue;
             }
@@ -136,21 +174,5 @@ public abstract class VoltDbContext : DbContext
         {
             property.CurrentValue = value;
         }
-    }
-
-    private static bool IsVoltModel(Type type)
-    {
-        var current = type;
-        while (current is not null)
-        {
-            if (current.IsGenericType && current.GetGenericTypeDefinition() == typeof(Model<>))
-            {
-                return true;
-            }
-
-            current = current.BaseType;
-        }
-
-        return false;
     }
 }
