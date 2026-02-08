@@ -65,7 +65,10 @@ public sealed class PendingMigrationsMiddleware
     {
         try
         {
-            var dbContext = services.GetService<VoltDbContext>();
+            // Create a new scope so we get a fresh DbContext, not the one
+            // from the current request that just threw an exception.
+            using var scope = services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetService<VoltDbContext>();
             if (dbContext is null) return [];
 
             var pending = await dbContext.Database.GetPendingMigrationsAsync();
