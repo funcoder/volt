@@ -1,9 +1,9 @@
+using Microsoft.AspNetCore.Mvc;
 using {{ app_name }}.Models;
 using Volt.Data;
 using Volt.Web.Controllers;
 {{~ if has_attachments ~}}
 using Volt.Storage;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 {{~ end ~}}
 
@@ -13,6 +13,7 @@ namespace {{ app_name }}.Controllers;
 /// RESTful resource controller for {{ model_name }}.
 /// Inherits standard CRUD actions from <see cref="ResourceController{T}"/>.
 /// </summary>
+[Route("[controller]")]
 public class {{ controller_name }} : ResourceController<{{ model_name }}>
 {
     /// <inheritdoc />
