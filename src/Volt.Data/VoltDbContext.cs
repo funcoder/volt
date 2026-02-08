@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Options;
 using Volt.Core;
+using Volt.Core.Conventions;
 using Volt.Data.Conventions;
 
 namespace Volt.Data;
@@ -49,6 +50,15 @@ public abstract class VoltDbContext : DbContext
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
+            // Apply snake_case columns to ALL entities (including non-Model types like VoltAttachment)
+            if (_voltOptions.UseSnakeCaseColumns)
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    property.SetColumnName(VoltConventions.ToColumnName(property.Name));
+                }
+            }
+
             if (!IsVoltModel(entityType.ClrType))
             {
                 continue;
