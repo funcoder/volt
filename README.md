@@ -30,7 +30,8 @@ volt new MyApp --simple
 # API-only project (JSON, JWT auth, Swagger)
 volt new MyApp --api
 
-# Specify a database provider
+# Specify a database provider (default: sqlite)
+volt new MyApp --database sqlite
 volt new MyApp --database postgres
 volt new MyApp --database sqlserver
 ```
