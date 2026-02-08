@@ -4,7 +4,7 @@
 
 Volt brings convention-over-configuration productivity to .NET. It's a curated collection of NuGet packages unified by a CLI tool and opinionated project templates - a layer on ASP.NET Core, not a replacement.
 
-Build full-stack web apps or APIs with zero boilerplate. Models go in `Models/`, controllers go in `Controllers/`, and Volt's source generators wire everything together at compile time.
+Build full-stack web apps or APIs with zero boilerplate. Volt's CLI generates multi-project solutions with clean separation of concerns, and source generators wire everything together at compile time.
 
 ## Quick Start
 
@@ -21,8 +21,11 @@ dotnet tool install -g VoltFramework.Cli
 ### Create a New Project
 
 ```bash
-# Full-stack web app (Blazor SSR + HTMX, SQLite by default)
+# Multi-project solution (default - Models, Data, Services, Web)
 volt new MyApp
+
+# Single-project layout (all code in one project)
+volt new MyApp --simple
 
 # API-only project (JSON, JWT auth, Swagger)
 volt new MyApp --api
@@ -40,7 +43,7 @@ volt server
 ```
 
 ```
-  ⚡ Volt v0.1.0 - Development Server
+  ⚡ Volt v0.3.0 - Development Server
   ────────────────────────────────────
   → http://localhost:5000
   → Database: SQLite (myapp_development.db)
@@ -80,34 +83,38 @@ volt db status              # Show migration status
 
 ## Project Structure
 
-Volt projects follow a convention-based directory layout:
+By default, `volt new` creates a multi-project solution with clean separation of concerns:
 
 ```
 MyApp/
-  Program.cs                  # Minimal: builder.UseVolt() → app.Run()
-  Models/                     # EF Core entities (auto-registered in DbContext)
-    Article.cs
-    User.cs
-  Controllers/                # Auto-discovered, convention-routed
-    ArticlesController.cs     # → GET/POST /articles, GET/PUT/DELETE /articles/{id}
-  Views/                      # Razor views matched to controller actions
-    Articles/
-      Index.cshtml
-      Show.cshtml
-      _Form.cshtml
-    Shared/
-      _Layout.cshtml
-  Services/                   # Auto-registered in DI (scoped)
-  Jobs/                       # Background jobs (Coravel)
-  Mailers/                    # Email senders with Razor templates
-  Channels/                   # Real-time SignalR hubs
-  Migrations/                 # EF Core migrations
-  Config/
-    Database.cs               # Database provider configuration
-  Seeds/
-    SeedData.cs               # Database seeding
-  wwwroot/                    # Static assets
+├── src/
+│   ├── MyApp.Models/           # Entity classes
+│   ├── MyApp.Data/             # DbContext, migrations, seeds
+│   ├── MyApp.Services/         # Jobs, mailers, channels
+│   └── MyApp.Web/              # Controllers, views, static files, Program.cs
+├── tests/
+│   └── MyApp.Tests/            # Unit and integration tests
+├── MyApp.sln
+├── CLAUDE.md                   # AI context (auto-generated)
+└── .cursorrules
 ```
+
+**Dependency flow:** `Models ← Data ← Services ← Web`
+
+Each generator places code in the correct project automatically:
+
+| Generator | Project | Path |
+|-----------|---------|------|
+| model | MyApp.Models | `ModelName.cs` |
+| controller | MyApp.Web | `Controllers/ModelsController.cs` |
+| views | MyApp.Web | `Views/Models/*.cshtml` |
+| migration | MyApp.Data | `Migrations/*.cs` |
+| job | MyApp.Services | `Jobs/JobName.cs` |
+| mailer | MyApp.Services | `Mailers/MailerName.cs` |
+| channel | MyApp.Services | `Channels/ChannelName.cs` |
+| test | MyApp.Tests | `Models/` or `Controllers/` |
+
+Use `volt new MyApp --simple` for a single-project layout with everything in one directory.
 
 Source generators discover classes by folder convention and wire everything at compile time - no runtime reflection, fully AOT-compatible, and inspectable in `obj/Generated/`.
 
@@ -408,7 +415,8 @@ public static void Configure(VoltDbOptions db)
 
 | Command | Description |
 |---------|-------------|
-| `volt new <name>` | Create a new Volt project |
+| `volt new <name>` | Create a new Volt project (multi-project solution) |
+| `volt new <name> --simple` | Create a single-project Volt app |
 | `volt server` | Start the development server (wraps `dotnet watch run`) |
 | `volt console` | Open a C# REPL with app context |
 | `volt routes` | List all registered routes |
@@ -443,6 +451,8 @@ When generating models or scaffolds, fields use `name:type` syntax:
 | `datetime` | `DateTime` | `timestamp` |
 | `guid` | `Guid` | `uniqueidentifier` |
 | `references` | `int` (FK) | `integer` + navigation property |
+| `image` | `int?` (FK) | Image upload with preview |
+| `file` | `int?` (FK) | File upload with download |
 
 ---
 
@@ -486,15 +496,15 @@ dotnet test
 ### Installing the CLI Locally
 
 ```bash
-dotnet pack src/Volt.Cli/Volt.Cli.csproj
-dotnet tool install --global --add-source src/Volt.Cli/bin/Release VoltFramework.Cli
+dotnet pack -c Release -o artifacts
+dotnet tool install -g VoltFramework.Cli --add-source artifacts
 ```
 
 ### Installing Templates Locally
 
 ```bash
-dotnet pack templates/Volt.Templates/Volt.Templates.csproj
-dotnet new install templates/Volt.Templates/bin/Release/Volt.Templates.0.1.0.nupkg
+dotnet pack templates/Volt.Templates/Volt.Templates.csproj -c Release -o artifacts
+dotnet new install artifacts/VoltFramework.Templates.0.3.0.nupkg
 ```
 
 ---
@@ -546,16 +556,19 @@ var updated = article with { Title = "New Title" };
 ## Roadmap
 
 ### Phase 1 - Foundation (current)
-- [x] Project templates (`dotnet new volt`, `dotnet new volt --api`)
+- [x] Project templates (`dotnet new volt`, `dotnet new volt-sln`, `dotnet new volt-api`)
+- [x] Multi-project solution layout (Models, Data, Services, Web) as default
 - [x] CLI tool with `new`, `generate`, `server`, `console`, `db *`, `routes`, `destroy`
 - [x] Source generators for model discovery, service registration, and route generation
 - [x] EF Core conventions (timestamps, soft deletes, snake_case, pluralization)
 - [x] `ResourceController<T>` and `ApiResourceController<T>` with CRUD defaults
+- [x] Full scaffold generation (model + migration + controller + views + tests)
 - [x] Background jobs, mailer, storage, real-time channels
+- [x] File/image attachments with upload support
 - [x] Test factories and assertion helpers
+- [x] AI context generation (CLAUDE.md, .cursorrules, copilot-instructions.md)
 
 ### Phase 2 - Productivity
-- [ ] Full scaffold generation (model + migration + controller + views + tests)
 - [ ] Validation framework integration
 - [ ] Enhanced REPL with full app context
 - [ ] HTMX tag helpers and Blazor SSR components
