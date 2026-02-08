@@ -23,9 +23,6 @@ artifacts/
 ## Secrets
 .env
 
-## AI Context
-CLAUDE.md
-
 ## OS
 .DS_Store
 Thumbs.db
