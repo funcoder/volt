@@ -33,7 +33,7 @@
                     <td class="whitespace-nowrap px-4 py-3 text-sm text-zinc-700">
                         @if (item.{{ field.attachment_name }} != null)
                         {
-                            <img src="@Url.Content($"~/uploads/{item.{{ field.attachment_name }}.Key}")" alt="" class="h-10 w-10 rounded object-cover" />
+                            <img src="@Url.Content($"~/storage/{item.{{ field.attachment_name }}.Key}")" alt="" class="h-10 w-10 rounded object-cover" />
                         }
                     </td>
 {{~ else if field.is_attachment ~}}

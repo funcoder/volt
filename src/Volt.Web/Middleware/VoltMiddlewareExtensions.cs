@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Volt.Web.Htmx;
 
@@ -32,6 +33,14 @@ public static class VoltMiddlewareExtensions
         app.UseMiddleware<PendingMigrationsMiddleware>();
 
         app.UseStaticFiles();
+
+        var storagePath = Path.GetFullPath("./storage");
+        Directory.CreateDirectory(storagePath);
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(storagePath),
+            RequestPath = "/storage"
+        });
 
         app.UseRouting();
 

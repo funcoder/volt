@@ -16,7 +16,7 @@
             <dd class="mt-1 text-sm text-zinc-900 sm:col-span-2 sm:mt-0">
                 @if (Model.{{ field.attachment_name }} != null)
                 {
-                    <img src="@Url.Content($"~/uploads/{Model.{{ field.attachment_name }}.Key}")" alt="" class="max-w-xs rounded" />
+                    <img src="@Url.Content($"~/storage/{Model.{{ field.attachment_name }}.Key}")" alt="" class="max-w-xs rounded" />
                 }
                 else
                 {
@@ -30,7 +30,7 @@
             <dd class="mt-1 text-sm text-zinc-900 sm:col-span-2 sm:mt-0">
                 @if (Model.{{ field.attachment_name }} != null)
                 {
-                    <a href="@Url.Content($"~/uploads/{Model.{{ field.attachment_name }}.Key}")" class="text-brand-600 hover:text-brand-800" download>@Model.{{ field.attachment_name }}.Filename</a>
+                    <a href="@Url.Content($"~/storage/{Model.{{ field.attachment_name }}.Key}")" class="text-brand-600 hover:text-brand-800" download>@Model.{{ field.attachment_name }}.Filename</a>
                 }
                 else
                 {

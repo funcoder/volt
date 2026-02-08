@@ -13,6 +13,7 @@ namespace Volt.Web.Controllers;
 /// Override <see cref="PermittedParams"/> to whitelist allowed properties.
 /// </summary>
 /// <typeparam name="T">The model type managed by this controller.</typeparam>
+[Route("[controller]")]
 public abstract class ResourceController<T> : Controller where T : Model<T>, new()
 {
     private const string FlashTempDataKey = "_VoltFlash";
