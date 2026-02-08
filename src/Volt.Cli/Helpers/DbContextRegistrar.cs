@@ -7,20 +7,18 @@ namespace Volt.Cli.Helpers;
 /// </summary>
 public static class DbContextRegistrar
 {
-    private const string DbContextFileName = "AppDbContext.cs";
-    private const string DbContextRelativePath = "Data";
-
     /// <summary>
     /// Adds a DbSet property for the given model to AppDbContext.cs.
     /// Skips if the DbSet already exists or the file cannot be found.
     /// </summary>
-    public static void RegisterModel(ProjectContext context, string appName, string modelName)
+    public static void RegisterModel(ProjectContext context, string modelName)
     {
-        var dbContextPath = context.ResolvePath(DbContextRelativePath, DbContextFileName);
+        var layout = context.Layout;
+        var dbContextPath = layout.ResolveDbContextPath();
 
         if (!File.Exists(dbContextPath))
         {
-            ConsoleOutput.Warning($"{DbContextRelativePath}/{DbContextFileName} not found. Skipping DbSet registration.");
+            ConsoleOutput.Warning("AppDbContext.cs not found. Skipping DbSet registration.");
             return;
         }
 
@@ -33,7 +31,7 @@ public static class DbContextRegistrar
             return;
         }
 
-        var modelsUsing = $"using {appName}.Models;";
+        var modelsUsing = $"using {layout.GetModelNamespace()};";
         if (!content.Contains(modelsUsing, StringComparison.Ordinal))
         {
             content = modelsUsing + Environment.NewLine + content;
@@ -48,7 +46,7 @@ public static class DbContextRegistrar
         }
 
         File.WriteAllText(dbContextPath, updatedContent);
-        ConsoleOutput.FileModified($"{DbContextRelativePath}/{DbContextFileName}");
+        ConsoleOutput.FileModified("AppDbContext.cs");
     }
 
     private static string? InsertDbSetProperty(string content, string modelName, string pluralName)

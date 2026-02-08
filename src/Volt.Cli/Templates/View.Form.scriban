@@ -1,4 +1,4 @@
-@model {{ app_name }}.Models.{{ model_name }}
+@model {{ model_namespace }}.{{ model_name }}
 
 <form asp-action="@ViewData["FormAction"]" method="post"{{~ if has_attachments ~}} enctype="multipart/form-data"{{~ end ~}}>
     <div asp-validation-summary="ModelOnly" class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700"></div>

@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Volt Framework",
+  "classifications": ["Web", "MVC", "Volt", "Solution"],
+  "identity": "Volt.Solution",
+  "name": "Volt Web Application (Multi-Project)",
+  "shortName": "volt-sln",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "VoltApp",
+  "preferNameDirectory": true,
+  "symbols": {
+    "database": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        { "choice": "sqlite", "description": "SQLite (default, zero config)" },
+        { "choice": "postgres", "description": "PostgreSQL" },
+        { "choice": "sqlserver", "description": "SQL Server" }
+      ],
+      "defaultValue": "sqlite",
+      "description": "The database provider to use"
+    },
+    "useSqlite": {
+      "type": "computed",
+      "value": "(database == \"sqlite\")"
+    },
+    "usePostgres": {
+      "type": "computed",
+      "value": "(database == \"postgres\")"
+    },
+    "useSqlServer": {
+      "type": "computed",
+      "value": "(database == \"sqlserver\")"
+    }
+  }
+}

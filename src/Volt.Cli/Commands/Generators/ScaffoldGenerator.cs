@@ -19,7 +19,7 @@ public static class ScaffoldGenerator
         var context = ProjectContext.Require();
         if (context is null) return;
 
-        var appName = context.GetAppName();
+        var layout = context.Layout;
         var parsedFields = FieldParser.Parse(fields);
         var modelName = EnsurePascalCase(name);
         var controllerName = $"{Pluralize(modelName)}Controller";
@@ -28,24 +28,24 @@ public static class ScaffoldGenerator
         ConsoleOutput.Info($"Scaffolding '{modelName}'...");
         ConsoleOutput.BlankLine();
 
-        GenerateModel(context, appName, modelName, parsedFields);
-        DbContextRegistrar.RegisterModel(context, appName, modelName);
-        GenerateResourceController(context, appName, modelName, controllerName, parsedFields);
-        GenerateViews(context, appName, modelName, parsedFields, routePath);
+        GenerateModel(layout, modelName, parsedFields);
+        DbContextRegistrar.RegisterModel(context, modelName);
+        GenerateResourceController(layout, modelName, controllerName, parsedFields);
+        GenerateViews(layout, modelName, parsedFields, routePath);
         var baseTimestamp = DateTime.UtcNow;
-        ModelGenerator.GenerateAttachmentsMigrationIfNeeded(context, appName, parsedFields, baseTimestamp);
-        ModelGenerator.GenerateMigration(context, appName, modelName, parsedFields, baseTimestamp.AddSeconds(1));
-        GenerateTests(context, appName, modelName, controllerName, parsedFields, routePath);
+        ModelGenerator.GenerateAttachmentsMigrationIfNeeded(context, parsedFields, baseTimestamp);
+        ModelGenerator.GenerateMigration(context, modelName, parsedFields, baseTimestamp.AddSeconds(1));
+        GenerateTests(layout, modelName, controllerName, parsedFields, routePath);
 
         ConsoleOutput.BlankLine();
         ConsoleOutput.Success($"Scaffold for '{modelName}' generated.");
     }
 
     private static void GenerateModel(
-        ProjectContext context, string appName, string modelName, IReadOnlyList<FieldDefinition> fields)
+        IProjectLayout layout, string modelName, IReadOnlyList<FieldDefinition> fields)
     {
-        var modelData = ModelGenerator.BuildTemplateData(appName, modelName, fields);
-        var modelPath = context.ResolvePath("Models", $"{modelName}.cs");
+        var modelData = ModelGenerator.BuildTemplateData(layout, modelName, fields);
+        var modelPath = layout.ResolveModelPath($"{modelName}.cs");
 
         if (TemplateEngine.RenderToFile("Model", modelData, modelPath))
         {
@@ -54,7 +54,7 @@ public static class ScaffoldGenerator
     }
 
     private static void GenerateResourceController(
-        ProjectContext context, string appName, string modelName, string controllerName,
+        IProjectLayout layout, string modelName, string controllerName,
         IReadOnlyList<FieldDefinition> fields)
     {
         var hasAttachments = fields.Any(f => f.IsAttachment);
@@ -75,7 +75,8 @@ public static class ScaffoldGenerator
 
         var data = new
         {
-            app_name = appName,
+            model_namespace = layout.GetModelNamespace(),
+            controller_namespace = layout.GetControllerNamespace(),
             controller_name = controllerName,
             model_name = modelName,
             fields = fields.Select(f => new { name = f.Name, type = f.Type }).ToArray(),
@@ -84,7 +85,7 @@ public static class ScaffoldGenerator
             attachments = attachments,
         };
 
-        var outputPath = context.ResolvePath("Controllers", $"{controllerName}.cs");
+        var outputPath = layout.ResolveControllerPath($"{controllerName}.cs");
 
         if (TemplateEngine.RenderToFile("ResourceController", data, outputPath))
         {
@@ -93,7 +94,7 @@ public static class ScaffoldGenerator
     }
 
     private static void GenerateViews(
-        ProjectContext context, string appName, string modelName,
+        IProjectLayout layout, string modelName,
         IReadOnlyList<FieldDefinition> fields, string routePath)
     {
         var viewFolder = Pluralize(modelName);
@@ -110,7 +111,7 @@ public static class ScaffoldGenerator
 
         var viewModel = new
         {
-            app_name = appName,
+            model_namespace = layout.GetModelNamespace(),
             model_name = modelName,
             model_name_plural = Pluralize(modelName),
             route_path = routePath,
@@ -123,7 +124,7 @@ public static class ScaffoldGenerator
 
         for (var i = 0; i < viewTemplates.Length; i++)
         {
-            var outputPath = context.ResolvePath("Views", viewFolder, viewFileNames[i]);
+            var outputPath = layout.ResolveViewPath(viewFolder, viewFileNames[i]);
 
             if (TemplateEngine.RenderToFile(viewTemplates[i], viewModel, outputPath))
             {
@@ -133,10 +134,10 @@ public static class ScaffoldGenerator
     }
 
     private static void GenerateTests(
-        ProjectContext context, string appName, string modelName, string controllerName,
+        IProjectLayout layout, string modelName, string controllerName,
         IReadOnlyList<FieldDefinition> fields, string routePath)
     {
-        if (!HasTestProject(context))
+        if (!HasTestProject(layout))
         {
             ConsoleOutput.Warning("No test project found. Skipping test generation.");
             return;
@@ -153,12 +154,13 @@ public static class ScaffoldGenerator
 
         var modelTestData = new
         {
-            app_name = appName,
+            model_namespace = layout.GetModelNamespace(),
+            test_namespace = layout.GetTestNamespace(),
             model_name = modelName,
             fields = fieldData,
         };
 
-        var modelTestPath = context.ResolvePath("Tests", "Models", $"{modelName}Test.cs");
+        var modelTestPath = layout.ResolveTestPath("Models", $"{modelName}Test.cs");
 
         if (TemplateEngine.RenderToFile("Test.Model", modelTestData, modelTestPath))
         {
@@ -167,14 +169,14 @@ public static class ScaffoldGenerator
 
         var controllerTestData = new
         {
-            app_name = appName,
+            test_namespace = layout.GetTestNamespace(),
             controller_name = controllerName,
             model_name = modelName,
             route_path = routePath,
             fields = fieldData,
         };
 
-        var controllerTestPath = context.ResolvePath("Tests", "Controllers", $"{controllerName}Test.cs");
+        var controllerTestPath = layout.ResolveTestPath("Controllers", $"{controllerName}Test.cs");
 
         if (TemplateEngine.RenderToFile("Test.Controller", controllerTestData, controllerTestPath))
         {
@@ -182,9 +184,9 @@ public static class ScaffoldGenerator
         }
     }
 
-    private static bool HasTestProject(ProjectContext context)
+    private static bool HasTestProject(IProjectLayout layout)
     {
-        var testsDir = context.ResolvePath("Tests");
+        var testsDir = layout.ResolveTestPath();
         if (!Directory.Exists(testsDir)) return false;
 
         var testCsprojs = Directory.GetFiles(testsDir, "*.Tests.csproj");

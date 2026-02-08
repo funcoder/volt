@@ -2,7 +2,7 @@ using FluentEmail.Core;
 using Microsoft.Extensions.Options;
 using Volt.Mailer;
 
-namespace {{ app_name }}.Mailers;
+namespace {{ mailer_namespace }};
 
 /// <summary>
 /// {{ mailer_name }} handles email delivery for {{ mailer_name | string.replace "Mailer" "" }} operations.

@@ -1,4 +1,4 @@
-@model {{ app_name }}.Models.{{ model_name }}
+@model {{ model_namespace }}.{{ model_name }}
 @{
     ViewData["Title"] = "New {{ model_name }}";
     ViewData["FormAction"] = "Create";

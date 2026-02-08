@@ -1,6 +1,6 @@
 using Volt.Jobs;
 
-namespace {{ app_name }}.Jobs;
+namespace {{ job_namespace }};
 
 /// <summary>
 /// Payload for the {{ job_name }} job.

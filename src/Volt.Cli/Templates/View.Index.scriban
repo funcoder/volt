@@ -1,4 +1,4 @@
-@model IEnumerable<{{ app_name }}.Models.{{ model_name }}>
+@model IEnumerable<{{ model_namespace }}.{{ model_name }}>
 @{
     ViewData["Title"] = "{{ model_name_plural }}";
 }

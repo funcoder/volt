@@ -1,6 +1,6 @@
 using Volt.RealTime;
 
-namespace {{ app_name }}.Channels;
+namespace {{ channel_namespace }};
 
 /// <summary>
 /// {{ channel_name }} real-time channel.

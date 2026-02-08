@@ -31,7 +31,7 @@ public static class ConsoleCommand
         if (context is null) return;
 
         ConsoleOutput.Banner();
-        ConsoleOutput.Info($"Loading project: {context.GetAppName()}");
+        ConsoleOutput.Info($"Loading project: {context.AppName}");
         ConsoleOutput.BlankLine();
 
         if (ProcessRunner.IsCommandAvailable("csharprepl"))
@@ -57,7 +57,7 @@ public static class ConsoleCommand
         await ProcessRunner.RunInteractiveAsync(
             "csharprepl",
             $"-r \"{context.CsprojPath}\"",
-            context.ProjectRoot);
+            context.Layout.GetWebProjectRoot());
     }
 
     private static async Task LaunchDotnetScript(ProjectContext context)
@@ -67,7 +67,7 @@ public static class ConsoleCommand
 
         await ProcessRunner.RunInteractiveAsync(
             "dotnet-script",
-            workingDirectory: context.ProjectRoot);
+            workingDirectory: context.Layout.GetWebProjectRoot());
     }
 
     private static void ShowInstallInstructions()

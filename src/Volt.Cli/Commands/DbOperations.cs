@@ -16,8 +16,9 @@ public static class DbOperations
         ConsoleOutput.Info("Running database migrations...");
         ConsoleOutput.BlankLine();
 
+        var efArgs = BuildEfArgs("ef database update", context);
         var exitCode = await ProcessRunner.RunAsync(
-            "dotnet", "ef database update", context.ProjectRoot);
+            "dotnet", efArgs, context.Layout.GetSolutionOrProjectRoot());
 
         if (exitCode == 0)
         {
@@ -40,8 +41,9 @@ public static class DbOperations
 
         for (var i = 0; i < steps; i++)
         {
+            var efArgs = BuildEfArgs("ef migrations remove --force", context);
             var exitCode = await ProcessRunner.RunAsync(
-                "dotnet", "ef migrations remove --force", context.ProjectRoot);
+                "dotnet", efArgs, context.Layout.GetSolutionOrProjectRoot());
 
             if (exitCode != 0)
             {
@@ -62,7 +64,7 @@ public static class DbOperations
         ConsoleOutput.BlankLine();
 
         var exitCode = await ProcessRunner.RunAsync(
-            "dotnet", "run -- --seed", context.ProjectRoot);
+            "dotnet", "run -- --seed", context.Layout.GetWebProjectRoot());
 
         if (exitCode == 0)
         {
@@ -82,8 +84,10 @@ public static class DbOperations
         ConsoleOutput.Warning("Resetting database (drop + create + migrate + seed)...");
         ConsoleOutput.BlankLine();
 
-        var dropCode = await ProcessRunner.RunAsync(
-            "dotnet", "ef database drop --force", context.ProjectRoot);
+        var root = context.Layout.GetSolutionOrProjectRoot();
+
+        var dropArgs = BuildEfArgs("ef database drop --force", context);
+        var dropCode = await ProcessRunner.RunAsync("dotnet", dropArgs, root);
 
         if (dropCode != 0)
         {
@@ -93,8 +97,8 @@ public static class DbOperations
 
         ConsoleOutput.Success("Database dropped.");
 
-        var migrateCode = await ProcessRunner.RunAsync(
-            "dotnet", "ef database update", context.ProjectRoot);
+        var migrateArgs = BuildEfArgs("ef database update", context);
+        var migrateCode = await ProcessRunner.RunAsync("dotnet", migrateArgs, root);
 
         if (migrateCode != 0)
         {
@@ -105,7 +109,7 @@ public static class DbOperations
         ConsoleOutput.Success("Migrations applied.");
 
         var seedCode = await ProcessRunner.RunAsync(
-            "dotnet", "run -- --seed", context.ProjectRoot);
+            "dotnet", "run -- --seed", context.Layout.GetWebProjectRoot());
 
         if (seedCode == 0)
         {
@@ -128,8 +132,9 @@ public static class DbOperations
         ConsoleOutput.Info("Migration status:");
         ConsoleOutput.BlankLine();
 
+        var efArgs = BuildEfArgs("ef migrations list", context);
         await ProcessRunner.RunAsync(
-            "dotnet", "ef migrations list", context.ProjectRoot);
+            "dotnet", efArgs, context.Layout.GetSolutionOrProjectRoot());
     }
 
     public static async Task DbConsole()
@@ -157,7 +162,8 @@ public static class DbOperations
             return;
         }
 
-        await ProcessRunner.RunInteractiveAsync(command, commandArgs, context.ProjectRoot);
+        await ProcessRunner.RunInteractiveAsync(
+            command, commandArgs, context.Layout.GetWebProjectRoot());
     }
 
     public static void Provider()
@@ -208,6 +214,18 @@ public static class DbOperations
         ConsoleOutput.Plain("  4. Re-run migrations: volt db migrate");
     }
 
+    private static string BuildEfArgs(string baseArgs, ProjectContext context)
+    {
+        var layout = context.Layout;
+        var projectArg = layout.GetEfProjectArg();
+        var startupArg = layout.GetEfStartupProjectArg();
+
+        var args = baseArgs;
+        if (projectArg is not null) args += $" {projectArg}";
+        if (startupArg is not null) args += $" {startupArg}";
+        return args;
+    }
+
     private static (string? command, string args) ResolveConsoleCommand(
         string provider, ProjectContext context)
     {
@@ -222,7 +240,8 @@ public static class DbOperations
 
     private static string FindSqliteDatabase(ProjectContext context)
     {
-        var dbFiles = Directory.GetFiles(context.ProjectRoot, "*.db");
+        var webRoot = context.Layout.GetWebProjectRoot();
+        var dbFiles = Directory.GetFiles(webRoot, "*.db");
         return dbFiles.Length > 0 ? dbFiles[0] : "app.db";
     }
 

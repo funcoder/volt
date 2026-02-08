@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using {{ app_name }}.Data;
+using {{ data_namespace }};
 
-namespace {{ app_name }}.Migrations;
+namespace {{ migration_namespace }};
 
 /// <summary>
 /// Creates the volt_attachments table for file/image storage.

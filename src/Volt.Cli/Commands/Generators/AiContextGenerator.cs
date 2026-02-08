@@ -14,29 +14,33 @@ public static class AiContextGenerator
         var context = ProjectContext.Require();
         if (context is null) return;
 
-        var appName = context.GetAppName();
-        var models = DiscoverModels(context);
-        var routes = DiscoverRoutes(context);
+        var layout = context.Layout;
+        var appName = context.AppName;
+        var models = DiscoverModels(layout);
+        var routes = DiscoverRoutes(layout);
 
         var data = new
         {
             app_name = appName,
+            is_solution_layout = layout.IsSolutionLayout,
             models = models,
             routes = routes,
         };
 
-        GenerateFile(context, "AiContext.Claude", data, "CLAUDE.md");
-        GenerateFile(context, "AiContext.Cursor", data, ".cursorrules");
-        GenerateCopilotFile(context, data);
+        var rootDir = layout.GetSolutionOrProjectRoot();
+
+        GenerateFile(rootDir, "AiContext.Claude", data, "CLAUDE.md");
+        GenerateFile(rootDir, "AiContext.Cursor", data, ".cursorrules");
+        GenerateCopilotFile(rootDir, data);
 
         ConsoleOutput.BlankLine();
         ConsoleOutput.Success("AI context files generated.");
     }
 
     private static void GenerateFile(
-        ProjectContext context, string templateName, object data, string fileName)
+        string rootDir, string templateName, object data, string fileName)
     {
-        var outputPath = context.ResolvePath(fileName);
+        var outputPath = Path.Combine(rootDir, fileName);
 
         if (File.Exists(outputPath))
         {
@@ -55,9 +59,9 @@ public static class AiContextGenerator
         ConsoleOutput.FileCreated(fileName);
     }
 
-    private static void GenerateCopilotFile(ProjectContext context, object data)
+    private static void GenerateCopilotFile(string rootDir, object data)
     {
-        var outputPath = context.ResolvePath(".github", "copilot-instructions.md");
+        var outputPath = Path.Combine(rootDir, ".github", "copilot-instructions.md");
         var directory = Path.GetDirectoryName(outputPath);
 
         if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
@@ -75,9 +79,9 @@ public static class AiContextGenerator
         ConsoleOutput.FileCreated(".github/copilot-instructions.md");
     }
 
-    private static object[] DiscoverModels(ProjectContext context)
+    private static object[] DiscoverModels(IProjectLayout layout)
     {
-        var modelsDir = context.ResolvePath("Models");
+        var modelsDir = layout.ResolveModelPath();
         if (!Directory.Exists(modelsDir)) return [];
 
         var modelFiles = Directory.GetFiles(modelsDir, "*.cs");
@@ -102,9 +106,9 @@ public static class AiContextGenerator
         return models.ToArray();
     }
 
-    private static object[] DiscoverRoutes(ProjectContext context)
+    private static object[] DiscoverRoutes(IProjectLayout layout)
     {
-        var controllersDir = context.ResolvePath("Controllers");
+        var controllersDir = layout.ResolveControllerPath();
         if (!Directory.Exists(controllersDir)) return [];
 
         var controllerFiles = Directory.GetFiles(controllersDir, "*Controller.cs");

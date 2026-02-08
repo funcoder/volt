@@ -1,0 +1,108 @@
+@{
+    ViewData["Title"] = "Welcome";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VoltApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-zinc-950 text-zinc-400 min-h-screen flex items-center justify-center antialiased">
+    <div class="w-full max-w-xl px-6 py-12">
+        <div class="text-center mb-12">
+            <div class="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600">
+                <svg class="h-6 w-6 fill-zinc-950" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight text-zinc-50 mb-1">VoltApp</h1>
+            <p class="text-xs font-medium uppercase tracking-widest text-zinc-600 mb-4">Volt Framework v0.2.0</p>
+            <p class="text-sm leading-relaxed text-zinc-500">
+                You're running on Volt &mdash; a Rails-like framework for .NET.<br />
+                Served from <code class="rounded border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 text-xs text-zinc-400">Controllers/HomeController.cs</code>
+            </p>
+        </div>
+
+        <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-amber-600">Quick Actions</p>
+        <div class="space-y-2 mb-0">
+            <div class="flex items-start gap-3.5 rounded-lg border border-zinc-800 bg-zinc-900 p-3.5 transition hover:border-zinc-700">
+                <div class="mt-px flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-zinc-800">
+                    <svg class="h-4 w-4 stroke-amber-600" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-200 mb-0.5">Generate a Scaffold</h3>
+                    <p class="text-sm text-zinc-500">Full CRUD in one command: <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-600">volt generate scaffold Post title:string body:text</code></p>
+                </div>
+            </div>
+            <div class="flex items-start gap-3.5 rounded-lg border border-zinc-800 bg-zinc-900 p-3.5 transition hover:border-zinc-700">
+                <div class="mt-px flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-zinc-800">
+                    <svg class="h-4 w-4 stroke-amber-600" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-200 mb-0.5">Run Migrations</h3>
+                    <p class="text-sm text-zinc-500">Apply database changes: <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-600">volt db migrate</code></p>
+                </div>
+            </div>
+            <div class="flex items-start gap-3.5 rounded-lg border border-zinc-800 bg-zinc-900 p-3.5 transition hover:border-zinc-700">
+                <div class="mt-px flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-zinc-800">
+                    <svg class="h-4 w-4 stroke-amber-600" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-200 mb-0.5">Convention Routing</h3>
+                    <p class="text-sm text-zinc-500">Controllers are auto-discovered with RESTful routes</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="my-8 h-px bg-zinc-800"></div>
+
+        <p class="mb-4 text-xs font-semibold uppercase tracking-widest text-amber-600">Getting Started</p>
+        <ol class="list-none counter-reset space-y-0">
+            <li class="flex items-baseline gap-3 py-2">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-[11px] font-bold text-zinc-950">1</span>
+                <span class="text-sm text-zinc-400 leading-relaxed">Generate your first resource: <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-500">volt generate scaffold Article title:string body:text published:bool</code></span>
+            </li>
+            <li class="flex items-baseline gap-3 border-t border-zinc-900 py-2">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-[11px] font-bold text-zinc-950">2</span>
+                <span class="text-sm text-zinc-400 leading-relaxed">Run the migration: <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-500">volt db migrate</code></span>
+            </li>
+            <li class="flex items-baseline gap-3 border-t border-zinc-900 py-2">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-[11px] font-bold text-zinc-950">3</span>
+                <span class="text-sm text-zinc-400 leading-relaxed">Browse to <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-500">/articles</code> and start building</span>
+            </li>
+            <li class="flex items-baseline gap-3 border-t border-zinc-900 py-2">
+                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-[11px] font-bold text-zinc-950">4</span>
+                <span class="text-sm text-zinc-400 leading-relaxed">Edit <code class="rounded border border-stone-800 bg-stone-900 px-1 text-xs text-amber-500">Views/Home/Index.cshtml</code> to replace this page</span>
+            </li>
+        </ol>
+
+        <div class="pt-8 text-center">
+            <a href="https://github.com/funcoder/volt" class="text-xs text-zinc-600 hover:text-amber-600 transition">GitHub</a>
+            <a href="https://github.com/funcoder/volt#readme" class="ml-5 text-xs text-zinc-600 hover:text-amber-600 transition">Docs</a>
+        </div>
+    </div>
+</body>
+</html>

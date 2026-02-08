@@ -1,7 +1,7 @@
 using Xunit;
-using {{ app_name }}.Models;
+using {{ model_namespace }};
 
-namespace {{ app_name }}.Tests.Models;
+namespace {{ test_namespace }}.Models;
 
 /// <summary>
 /// Unit tests for the <see cref="{{ model_name }}"/> model.

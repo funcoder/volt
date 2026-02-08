@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VoltApp.Services\VoltApp.Services.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="VoltFramework.Web" Version="0.3.0" />
+    <PackageReference Include="VoltFramework.Auth" Version="0.3.0" />
+    <PackageReference Include="VoltFramework.Core.Generators" Version="0.3.0" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

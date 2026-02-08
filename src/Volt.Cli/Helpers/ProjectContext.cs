@@ -8,44 +8,51 @@ public sealed class ProjectContext
 {
     private const string VoltPackagePrefix = "VoltFramework.";
     private const string CsprojExtension = ".csproj";
+    private const string SlnExtension = ".sln";
 
-    private ProjectContext(string projectRoot, string csprojPath)
+    private ProjectContext(string projectRoot, string csprojPath, IProjectLayout layout, string appName)
     {
         ProjectRoot = projectRoot;
         CsprojPath = csprojPath;
+        Layout = layout;
+        AppName = appName;
     }
 
     /// <summary>
-    /// The root directory of the Volt project.
+    /// The root directory of the Volt project (or solution root for multi-project).
     /// </summary>
     public string ProjectRoot { get; }
 
     /// <summary>
-    /// The full path to the project's .csproj file.
+    /// The full path to the project's .csproj file (the Web project in solution layout).
     /// </summary>
     public string CsprojPath { get; }
 
     /// <summary>
-    /// Walks up the directory tree from the current directory to find a .csproj
-    /// file that references Volt packages. Returns null if no Volt project is found.
+    /// The project layout strategy for resolving paths and namespaces.
     /// </summary>
-    /// <param name="startDirectory">The directory to start searching from. Defaults to the current directory.</param>
-    /// <returns>A <see cref="ProjectContext"/> if a Volt project is found; otherwise null.</returns>
+    public IProjectLayout Layout { get; }
+
+    /// <summary>
+    /// The base application name (e.g., "MyApp" not "MyApp.Web").
+    /// </summary>
+    public string AppName { get; }
+
+    /// <summary>
+    /// Walks up the directory tree from the current directory to find a Volt project.
+    /// Checks for .sln with Volt projects first, then falls back to single .csproj.
+    /// </summary>
     public static ProjectContext? FindProjectRoot(string? startDirectory = null)
     {
         var directory = startDirectory ?? Directory.GetCurrentDirectory();
 
         while (!string.IsNullOrEmpty(directory))
         {
-            var csprojFiles = Directory.GetFiles(directory, $"*{CsprojExtension}");
+            var solutionContext = TryDetectSolutionLayout(directory);
+            if (solutionContext is not null) return solutionContext;
 
-            foreach (var csproj in csprojFiles)
-            {
-                if (IsVoltProject(csproj))
-                {
-                    return new ProjectContext(directory, csproj);
-                }
-            }
+            var singleContext = TryDetectSingleProjectLayout(directory);
+            if (singleContext is not null) return singleContext;
 
             directory = Directory.GetParent(directory)?.FullName;
         }
@@ -55,58 +62,44 @@ public sealed class ProjectContext
 
     /// <summary>
     /// Extracts the application name from the .csproj filename.
-    /// For example, "MyApp.csproj" returns "MyApp".
+    /// Prefer using the AppName property directly.
     /// </summary>
-    /// <returns>The application name derived from the project file.</returns>
-    public string GetAppName()
-    {
-        return Path.GetFileNameWithoutExtension(CsprojPath);
-    }
+    public string GetAppName() => AppName;
 
     /// <summary>
     /// Reads the current database provider from appsettings.json or the .csproj file.
-    /// Returns "sqlite" as the default if no provider is configured.
     /// </summary>
-    /// <returns>The database provider name (sqlite, postgres, or sqlserver).</returns>
     public string GetDatabaseProvider()
     {
-        var appSettingsPath = Path.Combine(ProjectRoot, "appsettings.json");
+        var webRoot = Layout.GetWebProjectRoot();
+        var appSettingsPath = Path.Combine(webRoot, "appsettings.json");
 
         if (File.Exists(appSettingsPath))
         {
             var content = File.ReadAllText(appSettingsPath);
 
             if (content.Contains("Npgsql", StringComparison.OrdinalIgnoreCase))
-            {
                 return "postgres";
-            }
 
             if (content.Contains("SqlServer", StringComparison.OrdinalIgnoreCase))
-            {
                 return "sqlserver";
-            }
         }
 
         var csprojContent = File.ReadAllText(CsprojPath);
 
         if (csprojContent.Contains("Npgsql", StringComparison.OrdinalIgnoreCase))
-        {
             return "postgres";
-        }
 
         if (csprojContent.Contains("SqlServer", StringComparison.OrdinalIgnoreCase))
-        {
             return "sqlserver";
-        }
 
         return "sqlite";
     }
 
     /// <summary>
     /// Resolves a relative path within the project root to an absolute path.
+    /// Prefer using Layout.Resolve*Path() methods instead.
     /// </summary>
-    /// <param name="relativePath">The relative path from the project root.</param>
-    /// <returns>The full absolute path.</returns>
     public string ResolvePath(params string[] relativePath)
     {
         var parts = new string[relativePath.Length + 1];
@@ -119,7 +112,6 @@ public sealed class ProjectContext
     /// Requires a Volt project context. If no project is found, prints an error
     /// message and returns null to signal that the command should abort.
     /// </summary>
-    /// <returns>The project context, or null if not inside a Volt project.</returns>
     public static ProjectContext? Require()
     {
         var context = FindProjectRoot();
@@ -132,6 +124,55 @@ public sealed class ProjectContext
         }
 
         return context;
+    }
+
+    private static ProjectContext? TryDetectSolutionLayout(string directory)
+    {
+        var slnFiles = Directory.GetFiles(directory, $"*{SlnExtension}");
+
+        foreach (var slnFile in slnFiles)
+        {
+            var appName = Path.GetFileNameWithoutExtension(slnFile);
+            var webCsproj = Path.Combine(directory, "src", $"{appName}.Web", $"{appName}.Web.csproj");
+
+            if (!File.Exists(webCsproj)) continue;
+            if (!IsVoltProject(webCsproj)) continue;
+
+            var layout = new SolutionLayout(directory, appName);
+            return new ProjectContext(directory, webCsproj, layout, appName);
+        }
+
+        return null;
+    }
+
+    private static ProjectContext? TryDetectSingleProjectLayout(string directory)
+    {
+        var csprojFiles = Directory.GetFiles(directory, $"*{CsprojExtension}");
+
+        foreach (var csproj in csprojFiles)
+        {
+            if (!IsVoltProject(csproj)) continue;
+
+            var rawName = Path.GetFileNameWithoutExtension(csproj);
+            var appName = StripProjectSuffix(rawName);
+            var layout = new SingleProjectLayout(directory, appName);
+            return new ProjectContext(directory, csproj, layout, appName);
+        }
+
+        return null;
+    }
+
+    private static string StripProjectSuffix(string name)
+    {
+        string[] suffixes = [".Web", ".Data", ".Models", ".Services"];
+
+        foreach (var suffix in suffixes)
+        {
+            if (name.EndsWith(suffix, StringComparison.Ordinal))
+                return name[..^suffix.Length];
+        }
+
+        return name;
     }
 
     private static bool IsVoltProject(string csprojPath)

@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using {{ app_name }}.Models;
+{{~ if has_model ~}}
+using {{ model_namespace }};
+{{~ end ~}}
 
-namespace {{ app_name }}.Controllers;
+namespace {{ controller_namespace }};
 
 /// <summary>
 /// Handles HTTP requests for {{ model_name }} resources.

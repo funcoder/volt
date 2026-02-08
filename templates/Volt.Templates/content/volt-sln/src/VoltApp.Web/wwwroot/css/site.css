@@ -1,0 +1,5 @@
+/* Tailwind CSS is loaded via CDN in _Layout.cshtml.
+   To switch to a build step for production, run:
+     npx tailwindcss init
+     npx tailwindcss -i ./wwwroot/css/site.css -o ./wwwroot/css/output.css --watch
+   Then replace the CDN <script> with <link rel="stylesheet" href="~/css/output.css" /> */

@@ -4,7 +4,7 @@ using Volt.Cli.Helpers;
 namespace Volt.Cli.Commands;
 
 /// <summary>
-/// Creates a new Volt project by delegating to <c>dotnet new volt</c>
+/// Creates a new Volt project by delegating to <c>dotnet new</c>
 /// and running <c>dotnet restore</c>.
 /// </summary>
 public static class NewCommand
@@ -33,23 +33,31 @@ public static class NewCommand
             DefaultValueFactory = _ => false,
         };
 
+        var simpleOption = new Option<bool>("--simple")
+        {
+            Description = "Create a single-project app instead of a multi-project solution",
+            DefaultValueFactory = _ => false,
+        };
+
         var command = new Command("new", "Create a new Volt project");
         command.Add(nameArgument);
         command.Add(databaseOption);
         command.Add(apiOption);
+        command.Add(simpleOption);
 
         command.SetAction(async (parseResult, _) =>
         {
             var name = parseResult.GetValue(nameArgument);
             var database = parseResult.GetValue(databaseOption);
             var api = parseResult.GetValue(apiOption);
-            await ExecuteAsync(name!, database!, api);
+            var simple = parseResult.GetValue(simpleOption);
+            await ExecuteAsync(name!, database!, api, simple);
         });
 
         return command;
     }
 
-    private static async Task ExecuteAsync(string name, string database, bool api)
+    private static async Task ExecuteAsync(string name, string database, bool api, bool simple)
     {
         ConsoleOutput.Banner();
 
@@ -68,6 +76,10 @@ public static class NewCommand
         {
             ConsoleOutput.Info("Mode: API-only");
         }
+        else if (!simple)
+        {
+            ConsoleOutput.Info("Mode: Multi-project solution");
+        }
 
         ConsoleOutput.BlankLine();
 
@@ -79,14 +91,14 @@ public static class NewCommand
             return;
         }
 
-        var templateArgs = BuildTemplateArgs(name, database, api);
+        var templateArgs = BuildTemplateArgs(name, database, api, simple);
         var exitCode = await ProcessRunner.RunAsync("dotnet", $"new {templateArgs}");
 
         if (exitCode != 0)
         {
             ConsoleOutput.Error(
                 "Failed to create project. Ensure the Volt template is installed: " +
-                "dotnet new install Volt.Templates");
+                "dotnet new install VoltFramework.Templates");
             return;
         }
 
@@ -108,9 +120,9 @@ public static class NewCommand
         ConsoleOutput.Plain("  volt server");
     }
 
-    private static string BuildTemplateArgs(string name, string database, bool api)
+    private static string BuildTemplateArgs(string name, string database, bool api, bool simple)
     {
-        var templateName = api ? "volt-api" : "volt";
+        var templateName = api ? "volt-api" : (simple ? "volt" : "volt-sln");
         return $"{templateName} -n {name} --database {database}";
     }
 }

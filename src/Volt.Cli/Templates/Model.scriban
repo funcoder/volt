@@ -3,7 +3,7 @@ using Volt.Core;
 using Volt.Storage;
 {{~ end ~}}
 
-namespace {{ app_name }}.Models;
+namespace {{ model_namespace }};
 
 /// <summary>
 /// {{ model_name }} model.
@@ -14,7 +14,11 @@ public class {{ model_name }} : Model<{{ model_name }}>
     public {{ field.type }} {{ field.name }} { get; init; }{{ if field.default }} = {{ field.default }};{{ end }}
 {{~ end ~}}
 {{~ for assoc in associations ~}}
+{{~ if assoc.is_navigation ~}}
     public {{ assoc.type }} {{ assoc.name }} { get; init; } = null!;
+{{~ else ~}}
+    public {{ assoc.type }} {{ assoc.name }} { get; init; }
+{{~ end ~}}
 {{~ end ~}}
 {{~ for att in attachments ~}}
     public int? {{ att.name }}Id { get; init; }

@@ -68,7 +68,7 @@ public static class ServerCommand
         var url = $"{scheme}://localhost:{port}";
 
         ConsoleOutput.Info($"Starting Volt server at {url}");
-        ConsoleOutput.Info($"Project: {context.GetAppName()}");
+        ConsoleOutput.Info($"Project: {context.AppName}");
         ConsoleOutput.Info("Press Ctrl+C to stop.");
         ConsoleOutput.BlankLine();
 
@@ -78,8 +78,9 @@ public static class ServerCommand
         }
 
         var arguments = BuildArguments(port, https, verbose);
+        var webRoot = context.Layout.GetWebProjectRoot();
         var exitCode = await ProcessRunner.RunAsync(
-            "dotnet", arguments, context.ProjectRoot);
+            "dotnet", arguments, webRoot);
 
         if (exitCode != 0)
         {

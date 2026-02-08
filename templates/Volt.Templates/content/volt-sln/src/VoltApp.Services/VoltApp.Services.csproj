@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VoltApp.Data\VoltApp.Data.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="VoltFramework.Jobs" Version="0.3.0" />
+    <PackageReference Include="VoltFramework.Mailer" Version="0.3.0" />
+    <PackageReference Include="VoltFramework.RealTime" Version="0.3.0" />
+  </ItemGroup>
+</Project>

@@ -31,7 +31,7 @@ public static partial class RoutesCommand
         var context = ProjectContext.Require();
         if (context is null) return;
 
-        ConsoleOutput.Info($"Routes for {context.GetAppName()}");
+        ConsoleOutput.Info($"Routes for {context.AppName}");
         ConsoleOutput.BlankLine();
 
         var routes = CollectRoutes(context);
@@ -53,8 +53,9 @@ public static partial class RoutesCommand
     private static List<RouteEntry> CollectRoutes(ProjectContext context)
     {
         var routes = new List<RouteEntry>();
+        var layout = context.Layout;
 
-        var routeRegistrationPath = FindRouteRegistration(context);
+        var routeRegistrationPath = FindRouteRegistration(layout);
         if (routeRegistrationPath is not null)
         {
             routes.AddRange(ParseRouteRegistration(routeRegistrationPath));
@@ -62,18 +63,19 @@ public static partial class RoutesCommand
 
         if (routes.Count == 0)
         {
-            routes.AddRange(ScanControllers(context));
+            routes.AddRange(ScanControllers(layout));
         }
 
         return routes;
     }
 
-    private static string? FindRouteRegistration(ProjectContext context)
+    private static string? FindRouteRegistration(IProjectLayout layout)
     {
+        var webRoot = layout.GetWebProjectRoot();
         var candidates = new[]
         {
-            context.ResolvePath("VoltRouteRegistration.cs"),
-            context.ResolvePath("Routes.cs"),
+            Path.Combine(webRoot, "VoltRouteRegistration.cs"),
+            Path.Combine(webRoot, "Routes.cs"),
         };
 
         return candidates.FirstOrDefault(File.Exists);
@@ -99,9 +101,9 @@ public static partial class RoutesCommand
         }
     }
 
-    private static IEnumerable<RouteEntry> ScanControllers(ProjectContext context)
+    private static IEnumerable<RouteEntry> ScanControllers(IProjectLayout layout)
     {
-        var controllersDir = context.ResolvePath("Controllers");
+        var controllersDir = layout.ResolveControllerPath();
 
         if (!Directory.Exists(controllersDir))
         {

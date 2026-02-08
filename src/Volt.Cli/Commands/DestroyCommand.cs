@@ -129,13 +129,14 @@ public static class DestroyCommand
         var context = ProjectContext.Require();
         if (context is null) return;
 
+        var layout = context.Layout;
         var modelName = EnsurePascalCase(name);
 
         ConsoleOutput.Info($"Destroying model '{modelName}'...");
         ConsoleOutput.BlankLine();
 
-        RemoveFile(context, "Models", $"{modelName}.cs");
-        RemoveMigrations(context, modelName);
+        RemoveFileAtPath(layout.ResolveModelPath($"{modelName}.cs"), $"Models/{modelName}.cs");
+        RemoveMigrations(layout, modelName);
 
         ConsoleOutput.BlankLine();
         ConsoleOutput.Success($"Model '{modelName}' destroyed.");
@@ -146,12 +147,15 @@ public static class DestroyCommand
         var context = ProjectContext.Require();
         if (context is null) return;
 
+        var layout = context.Layout;
         var controllerName = EnsureControllerSuffix(name);
 
         ConsoleOutput.Info($"Destroying controller '{controllerName}'...");
         ConsoleOutput.BlankLine();
 
-        RemoveFile(context, "Controllers", $"{controllerName}.cs");
+        RemoveFileAtPath(
+            layout.ResolveControllerPath($"{controllerName}.cs"),
+            $"Controllers/{controllerName}.cs");
 
         ConsoleOutput.BlankLine();
         ConsoleOutput.Success($"Controller '{controllerName}' destroyed.");
@@ -162,6 +166,7 @@ public static class DestroyCommand
         var context = ProjectContext.Require();
         if (context is null) return;
 
+        var layout = context.Layout;
         var modelName = EnsurePascalCase(name);
         var controllerName = $"{Pluralize(modelName)}Controller";
         var viewFolder = Pluralize(modelName);
@@ -169,12 +174,18 @@ public static class DestroyCommand
         ConsoleOutput.Info($"Destroying scaffold '{modelName}'...");
         ConsoleOutput.BlankLine();
 
-        RemoveFile(context, "Models", $"{modelName}.cs");
-        RemoveFile(context, "Controllers", $"{controllerName}.cs");
-        RemoveDirectory(context, "Views", viewFolder);
-        RemoveMigrations(context, modelName);
-        RemoveFile(context, Path.Combine("Tests", "Models"), $"{modelName}Test.cs");
-        RemoveFile(context, Path.Combine("Tests", "Controllers"), $"{controllerName}Test.cs");
+        RemoveFileAtPath(layout.ResolveModelPath($"{modelName}.cs"), $"Models/{modelName}.cs");
+        RemoveFileAtPath(
+            layout.ResolveControllerPath($"{controllerName}.cs"),
+            $"Controllers/{controllerName}.cs");
+        RemoveDirectoryAtPath(layout.ResolveViewPath(viewFolder), $"Views/{viewFolder}/");
+        RemoveMigrations(layout, modelName);
+        RemoveFileAtPath(
+            layout.ResolveTestPath("Models", $"{modelName}Test.cs"),
+            $"Tests/Models/{modelName}Test.cs");
+        RemoveFileAtPath(
+            layout.ResolveTestPath("Controllers", $"{controllerName}Test.cs"),
+            $"Tests/Controllers/{controllerName}Test.cs");
 
         ConsoleOutput.BlankLine();
         ConsoleOutput.Success($"Scaffold '{modelName}' destroyed.");
@@ -185,12 +196,13 @@ public static class DestroyCommand
         var context = ProjectContext.Require();
         if (context is null) return;
 
+        var layout = context.Layout;
         var jobName = EnsurePascalCase(name);
 
         ConsoleOutput.Info($"Destroying job '{jobName}'...");
         ConsoleOutput.BlankLine();
 
-        RemoveFile(context, "Jobs", $"{jobName}.cs");
+        RemoveFileAtPath(layout.ResolveJobPath($"{jobName}.cs"), $"Jobs/{jobName}.cs");
 
         ConsoleOutput.BlankLine();
         ConsoleOutput.Success($"Job '{jobName}' destroyed.");
@@ -201,12 +213,13 @@ public static class DestroyCommand
         var context = ProjectContext.Require();
         if (context is null) return;
 
+        var layout = context.Layout;
         var mailerName = EnsureMailerSuffix(name);
 
         ConsoleOutput.Info($"Destroying mailer '{mailerName}'...");
         ConsoleOutput.BlankLine();
 
-        RemoveFile(context, "Mailers", $"{mailerName}.cs");
+        RemoveFileAtPath(layout.ResolveMailerPath($"{mailerName}.cs"), $"Mailers/{mailerName}.cs");
 
         ConsoleOutput.BlankLine();
         ConsoleOutput.Success($"Mailer '{mailerName}' destroyed.");
@@ -217,52 +230,47 @@ public static class DestroyCommand
         var context = ProjectContext.Require();
         if (context is null) return;
 
+        var layout = context.Layout;
         var channelName = EnsureChannelSuffix(name);
 
         ConsoleOutput.Info($"Destroying channel '{channelName}'...");
         ConsoleOutput.BlankLine();
 
-        RemoveFile(context, "Channels", $"{channelName}.cs");
+        RemoveFileAtPath(layout.ResolveChannelPath($"{channelName}.cs"), $"Channels/{channelName}.cs");
 
         ConsoleOutput.BlankLine();
         ConsoleOutput.Success($"Channel '{channelName}' destroyed.");
     }
 
-    private static void RemoveFile(ProjectContext context, string folder, string fileName)
+    private static void RemoveFileAtPath(string fullPath, string displayPath)
     {
-        var fullPath = context.ResolvePath(folder, fileName);
-        var relativePath = Path.Combine(folder, fileName);
-
         if (File.Exists(fullPath))
         {
             File.Delete(fullPath);
-            ConsoleOutput.FileDeleted(relativePath);
+            ConsoleOutput.FileDeleted(displayPath);
         }
         else
         {
-            ConsoleOutput.FileSkipped($"{relativePath} (not found)");
+            ConsoleOutput.FileSkipped($"{displayPath} (not found)");
         }
     }
 
-    private static void RemoveDirectory(ProjectContext context, string parent, string folder)
+    private static void RemoveDirectoryAtPath(string fullPath, string displayPath)
     {
-        var fullPath = context.ResolvePath(parent, folder);
-        var relativePath = Path.Combine(parent, folder);
-
         if (Directory.Exists(fullPath))
         {
             Directory.Delete(fullPath, recursive: true);
-            ConsoleOutput.FileDeleted($"{relativePath}/");
+            ConsoleOutput.FileDeleted(displayPath);
         }
         else
         {
-            ConsoleOutput.FileSkipped($"{relativePath}/ (not found)");
+            ConsoleOutput.FileSkipped($"{displayPath} (not found)");
         }
     }
 
-    private static void RemoveMigrations(ProjectContext context, string modelName)
+    private static void RemoveMigrations(IProjectLayout layout, string modelName)
     {
-        var migrationsDir = context.ResolvePath("Migrations");
+        var migrationsDir = layout.ResolveMigrationPath();
         if (!Directory.Exists(migrationsDir)) return;
 
         var pluralName = Pluralize(modelName);

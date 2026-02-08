@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using {{ app_name }}.Models;
+using {{ model_namespace }};
 using Volt.Data;
 using Volt.Web.Controllers;
 {{~ if has_attachments ~}}
@@ -7,7 +7,7 @@ using Volt.Storage;
 using Microsoft.EntityFrameworkCore;
 {{~ end ~}}
 
-namespace {{ app_name }}.Controllers;
+namespace {{ controller_namespace }};
 
 /// <summary>
 /// RESTful resource controller for {{ model_name }}.

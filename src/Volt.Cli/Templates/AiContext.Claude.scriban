@@ -4,6 +4,37 @@ A web application built with the Volt Framework (.NET, Rails-like conventions).
 
 ## Project Structure
 
+{{~ if is_solution_layout ~}}
+This is a multi-project solution with clean separation of concerns:
+
+```
+src/
+├── {{ app_name }}.Models/         Entity classes (namespace: {{ app_name }}.Models)
+├── {{ app_name }}.Data/           DbContext, migrations, seeds (namespace: {{ app_name }}.Data)
+├── {{ app_name }}.Services/       Jobs, mailers, channels (namespace: {{ app_name }}.Services)
+└── {{ app_name }}.Web/            Controllers, views, static files (namespace: {{ app_name }}.Web)
+tests/
+└── {{ app_name }}.Tests/          Unit and integration tests
+```
+
+### Dependency Flow
+```
+{{ app_name }}.Models  ←  {{ app_name }}.Data  ←  {{ app_name }}.Services  ←  {{ app_name }}.Web
+```
+
+### Where Code Goes
+| Generator | Project | Path |
+|-----------|---------|------|
+| model | {{ app_name }}.Models | `ModelName.cs` (root) |
+| controller | {{ app_name }}.Web | `Controllers/ModelsController.cs` |
+| views | {{ app_name }}.Web | `Views/Models/*.cshtml` |
+| migration | {{ app_name }}.Data | `Migrations/*.cs` |
+| seed | {{ app_name }}.Data | `Seeds/*.cs` |
+| job | {{ app_name }}.Services | `Jobs/JobName.cs` |
+| mailer | {{ app_name }}.Services | `Mailers/MailerName.cs` |
+| channel | {{ app_name }}.Services | `Channels/ChannelName.cs` |
+| test | {{ app_name }}.Tests | `Models/` or `Controllers/` |
+{{~ else ~}}
 ```
 Controllers/     MVC controllers (RESTful resource controllers)
 Models/          Domain models (init-only properties, soft-delete)
@@ -17,6 +48,7 @@ Services/        Application services
 Seeds/           Database seed data
 wwwroot/         Static files
 ```
+{{~ end ~}}
 {{~ if models.size > 0 ~}}
 
 ## Models

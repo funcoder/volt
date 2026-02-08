@@ -1,6 +1,16 @@
 This is a Volt Framework project (.NET, Rails-like conventions).
 App name: {{ app_name }}
 
+{{~ if is_solution_layout ~}}
+Multi-project solution structure:
+- src/{{ app_name }}.Models/ - Entity classes (namespace: {{ app_name }}.Models)
+- src/{{ app_name }}.Data/ - DbContext, migrations, seeds (namespace: {{ app_name }}.Data)
+- src/{{ app_name }}.Services/ - Jobs, mailers, channels (namespace: {{ app_name }}.Services)
+- src/{{ app_name }}.Web/ - Controllers, views, static files (namespace: {{ app_name }}.Web)
+- tests/{{ app_name }}.Tests/ - Unit and integration tests
+
+Dependency flow: Models ← Data ← Services ← Web
+{{~ else ~}}
 Project structure:
 - Controllers/ - RESTful resource controllers inheriting ResourceController<T>
 - Models/ - Domain models with init-only properties and soft-delete
@@ -8,6 +18,7 @@ Project structure:
 - Data/ - AppDbContext inheriting VoltDbContext
 - Migrations/ - Timestamp-prefixed EF Core migrations
 - Jobs/, Mailers/, Channels/, Services/, Seeds/
+{{~ end ~}}
 {{~ if models.size > 0 ~}}
 
 Models:

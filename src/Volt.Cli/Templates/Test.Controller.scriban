@@ -1,7 +1,7 @@
 using System.Net;
 using Xunit;
 
-namespace {{ app_name }}.Tests.Controllers;
+namespace {{ test_namespace }}.Controllers;
 
 /// <summary>
 /// Integration tests for the {{ controller_name }}.
