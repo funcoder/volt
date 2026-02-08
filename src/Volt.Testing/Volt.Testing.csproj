@@ -3,6 +3,7 @@
     <Description>Volt Framework - Test helpers, factories, and assertions</Description>
     <PackageId>VoltFramework.Testing</PackageId>
     <IsPackable>true</IsPackable>
+    <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>

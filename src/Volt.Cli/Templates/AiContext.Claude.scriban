@@ -46,9 +46,9 @@ volt generate mailer Welcome
 volt generate channel Chat
 volt generate migration AddSlugToPosts
 volt generate ai-context       # Regenerate this file
-volt db:migrate                # Apply pending migrations
-volt db:rollback               # Rollback last migration
-volt db:seed                   # Run database seeds
+volt db migrate                # Apply pending migrations
+volt db rollback               # Rollback last migration
+volt db seed                   # Run database seeds
 ```
 
 ## Field Types

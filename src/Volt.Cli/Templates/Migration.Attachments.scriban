@@ -19,19 +19,19 @@ public partial class CreateVoltAttachments : Migration
             name: "volt_attachments",
             columns: table => new
             {
-                Id = table.Column<int>(nullable: false)
+                id = table.Column<int>(nullable: false)
                     .Annotation("Sqlite:Autoincrement", true),
-                Filename = table.Column<string>(nullable: false),
-                ContentType = table.Column<string>(nullable: false),
-                ByteSize = table.Column<long>(nullable: false),
-                Key = table.Column<string>(nullable: false),
-                ServiceName = table.Column<string>(nullable: false, defaultValue: "local"),
-                Checksum = table.Column<string>(nullable: true),
-                CreatedAt = table.Column<DateTime>(nullable: false),
+                filename = table.Column<string>(nullable: false),
+                content_type = table.Column<string>(nullable: false),
+                byte_size = table.Column<long>(nullable: false),
+                key = table.Column<string>(nullable: false),
+                service_name = table.Column<string>(nullable: false, defaultValue: "local"),
+                checksum = table.Column<string>(nullable: true),
+                created_at = table.Column<DateTime>(nullable: false),
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_volt_attachments", x => x.Id);
+                table.PrimaryKey("PK_volt_attachments", x => x.id);
             });
     }
 

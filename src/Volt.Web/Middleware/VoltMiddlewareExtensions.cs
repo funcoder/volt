@@ -18,6 +18,8 @@ public static class VoltMiddlewareExtensions
     /// <returns>The configured web application for chaining.</returns>
     public static WebApplication UseVolt(this WebApplication app)
     {
+        app.UseMiddleware<PendingMigrationsMiddleware>();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -28,8 +30,6 @@ public static class VoltMiddlewareExtensions
             app.UseHsts();
             app.UseHttpsRedirection();
         }
-
-        app.UseMiddleware<PendingMigrationsMiddleware>();
 
         app.UseStaticFiles();
 

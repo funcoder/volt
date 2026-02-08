@@ -14,8 +14,8 @@ CLI commands:
 - volt generate model <Name> <fields...> - Model + migration
 - volt generate controller <Name> - Empty controller
 - volt generate ai-context - Regenerate AI context files
-- volt db:migrate - Apply migrations
-- volt db:rollback - Rollback last migration
+- volt db migrate - Apply migrations
+- volt db rollback - Rollback last migration
 
 Field types: string, text, int, bool, decimal, datetime, references (FK), image (upload), file (upload)
 

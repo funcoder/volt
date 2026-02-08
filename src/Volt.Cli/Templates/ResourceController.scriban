@@ -68,8 +68,8 @@ public class {{ controller_name }} : ResourceController<{{ model_name }}>
         if (!ModelState.IsValid)
             return View("New", entity);
 
-        Db.Set<{{ model_name }}>().Add(entity);
         await ProcessAttachments(entity);
+        Db.Set<{{ model_name }}>().Add(entity);
 
         await Db.SaveChangesAsync();
         Flash("Created successfully.", Volt.Core.Flash.FlashMessageType.Success);
@@ -105,7 +105,7 @@ public class {{ controller_name }} : ResourceController<{{ model_name }}>
         {
             using var stream = {{ att.form_name }}File.OpenReadStream();
             var attachment = await _storage.Store(stream, {{ att.form_name }}File.FileName, {{ att.form_name }}File.ContentType);
-            Db.Entry(entity).Property(e => e.{{ att.name }}Id).CurrentValue = attachment.Id;
+            Db.Entry(entity).Reference(e => e.{{ att.name }}).CurrentValue = attachment;
         }
 {{~ end ~}}
     }

@@ -1,0 +1,13 @@
+@model {{ app_name }}.Models.{{ model_name }}
+@{
+    ViewData["Title"] = "Edit {{ model_name }}";
+    ViewData["FormAction"] = "Update";
+}
+
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-zinc-900">Edit {{ model_name }}</h1>
+</div>
+
+<div class="rounded-lg border border-zinc-200 bg-white p-6">
+    <partial name="_Form" model="Model" />
+</div>

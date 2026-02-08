@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Volt.Data;
 
 namespace Volt.Web.Middleware;
@@ -15,22 +14,14 @@ namespace Volt.Web.Middleware;
 public sealed class PendingMigrationsMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly IHostEnvironment _environment;
 
-    public PendingMigrationsMiddleware(RequestDelegate next, IHostEnvironment environment)
+    public PendingMigrationsMiddleware(RequestDelegate next)
     {
         _next = next;
-        _environment = environment;
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (!_environment.IsDevelopment())
-        {
-            await _next(context);
-            return;
-        }
-
         try
         {
             await _next(context);

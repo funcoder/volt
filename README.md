@@ -68,12 +68,12 @@ volt generate channel ChatChannel
 ### Manage the Database
 
 ```bash
-volt db:migrate             # Run pending migrations
-volt db:rollback            # Rollback last migration
-volt db:rollback --steps 3  # Rollback 3 migrations
-volt db:seed                # Run Seeds/SeedData.cs
-volt db:reset               # Drop, create, migrate, seed
-volt db:status              # Show migration status
+volt db migrate             # Run pending migrations
+volt db rollback            # Rollback last migration
+volt db rollback --steps 3  # Rollback 3 migrations
+volt db seed                # Run Seeds/SeedData.cs
+volt db reset               # Drop, create, migrate, seed
+volt db status              # Show migration status
 ```
 
 ---
@@ -419,11 +419,11 @@ public static void Configure(VoltDbOptions db)
 | `volt generate job <Name>` | Generate a background job |
 | `volt generate mailer <Name> [methods...]` | Generate a mailer with email methods |
 | `volt generate channel <Name>` | Generate a real-time channel |
-| `volt db:migrate` | Run pending EF Core migrations |
-| `volt db:rollback [--steps N]` | Rollback migrations |
-| `volt db:seed` | Run the database seeder |
-| `volt db:reset` | Drop, recreate, migrate, and seed |
-| `volt db:status` | Show migration status |
+| `volt db migrate` | Run pending EF Core migrations |
+| `volt db rollback [--steps N]` | Rollback migrations |
+| `volt db seed` | Run the database seeder |
+| `volt db reset` | Drop, recreate, migrate, and seed |
+| `volt db status` | Show migration status |
 | `volt destroy <type> <Name>` | Reverse a generate command |
 
 ### Field Type Syntax
@@ -547,7 +547,7 @@ var updated = article with { Title = "New Title" };
 
 ### Phase 1 - Foundation (current)
 - [x] Project templates (`dotnet new volt`, `dotnet new volt --api`)
-- [x] CLI tool with `new`, `generate`, `server`, `console`, `db:*`, `routes`, `destroy`
+- [x] CLI tool with `new`, `generate`, `server`, `console`, `db *`, `routes`, `destroy`
 - [x] Source generators for model discovery, service registration, and route generation
 - [x] EF Core conventions (timestamps, soft deletes, snake_case, pluralization)
 - [x] `ResourceController<T>` and `ApiResourceController<T>` with CRUD defaults

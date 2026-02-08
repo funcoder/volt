@@ -19,32 +19,32 @@ public partial class Create{{ model_name_plural }} : Migration
             name: "{{ table_name }}",
             columns: table => new
             {
-                Id = table.Column<int>(nullable: false)
+                id = table.Column<int>(nullable: false)
                     .Annotation("Sqlite:Autoincrement", true),
 {{~ for field in fields ~}}
-                {{ field.name }} = table.Column<{{ field.type }}>(nullable: {{ field.nullable }}),
+                {{ field.column_name }} = table.Column<{{ field.type }}>(nullable: {{ field.nullable }}),
 {{~ end ~}}
-                CreatedAt = table.Column<DateTime>(nullable: false),
-                UpdatedAt = table.Column<DateTime>(nullable: false),
-                DeletedAt = table.Column<DateTime>(nullable: true),
+                created_at = table.Column<DateTime>(nullable: false),
+                updated_at = table.Column<DateTime>(nullable: false),
+                deleted_at = table.Column<DateTime>(nullable: true),
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_{{ table_name }}", x => x.Id);
+                table.PrimaryKey("PK_{{ table_name }}", x => x.id);
 {{~ for field in foreign_keys ~}}
                 table.ForeignKey(
-                    name: "FK_{{ table_name }}_{{ field.referenced_table }}_{{ field.name }}",
-                    column: x => x.{{ field.name }},
+                    name: "FK_{{ table_name }}_{{ field.referenced_table }}_{{ field.column_name }}",
+                    column: x => x.{{ field.column_name }},
                     principalTable: "{{ field.referenced_table }}",
-                    principalColumn: "Id",
+                    principalColumn: "id",
                     onDelete: ReferentialAction.Cascade);
 {{~ end ~}}
 {{~ for field in attachment_keys ~}}
                 table.ForeignKey(
-                    name: "FK_{{ table_name }}_volt_attachments_{{ field.name }}",
-                    column: x => x.{{ field.name }},
+                    name: "FK_{{ table_name }}_volt_attachments_{{ field.column_name }}",
+                    column: x => x.{{ field.column_name }},
                     principalTable: "volt_attachments",
-                    principalColumn: "Id",
+                    principalColumn: "id",
                     onDelete: ReferentialAction.SetNull);
 {{~ end ~}}
             });

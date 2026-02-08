@@ -10,6 +10,12 @@ public static class ScaffoldGenerator
 {
     public static void Generate(string name, string[] fields)
     {
+        if (name.Contains(':'))
+        {
+            ConsoleOutput.Error($"Invalid name '{name}'. Did you forget the model name? Usage: volt generate scaffold <Name> [fields...]");
+            return;
+        }
+
         var context = ProjectContext.Require();
         if (context is null) return;
 
@@ -112,8 +118,8 @@ public static class ScaffoldGenerator
             has_attachments = hasAttachments,
         };
 
-        var viewTemplates = new[] { "View.Index", "View.Show", "View.Form" };
-        var viewFileNames = new[] { "Index.cshtml", "Show.cshtml", "_Form.cshtml" };
+        var viewTemplates = new[] { "View.Index", "View.Show", "View.New", "View.Edit", "View.Form" };
+        var viewFileNames = new[] { "Index.cshtml", "Show.cshtml", "New.cshtml", "Edit.cshtml", "_Form.cshtml" };
 
         for (var i = 0; i < viewTemplates.Length; i++)
         {

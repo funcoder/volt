@@ -10,6 +10,12 @@ public static class ModelGenerator
 {
     public static void Generate(string name, string[] fields)
     {
+        if (name.Contains(':'))
+        {
+            ConsoleOutput.Error($"Invalid name '{name}'. Did you forget the model name? Usage: volt generate model <Name> [fields...]");
+            return;
+        }
+
         var context = ProjectContext.Require();
         if (context is null) return;
 
@@ -88,11 +94,21 @@ public static class ModelGenerator
             fields = fields.Select(f => new
             {
                 name = f.Name,
+                column_name = ToSnakeCase(f.Name),
                 type = f.IsAttachment ? "int" : f.Type,
                 nullable = (f.Type == "string" || f.IsAttachment) ? "true" : "false",
             }).ToArray(),
-            foreign_keys = foreignKeys,
-            attachment_keys = attachmentKeys,
+            foreign_keys = foreignKeys.Select(f => new
+            {
+                name = f.name,
+                column_name = ToSnakeCase(f.name),
+                referenced_table = f.referenced_table,
+            }).ToArray(),
+            attachment_keys = attachmentKeys.Select(f => new
+            {
+                name = f.name,
+                column_name = ToSnakeCase(f.name),
+            }).ToArray(),
         };
 
         var migrationPath = context.ResolvePath(

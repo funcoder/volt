@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Volt.Data\Volt.Data.csproj" />
+    <ProjectReference Include="..\..\src\Volt.Storage\Volt.Storage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

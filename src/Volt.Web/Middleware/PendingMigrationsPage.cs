@@ -161,7 +161,7 @@ internal static class PendingMigrationsPage
                     </table>
                     <div class="command-section">
                         <div class="command-label">Run in your terminal</div>
-                        <div class="command">volt db:migrate</div>
+                        <div class="command">volt db migrate</div>
                     </div>
                 </div>
                 <div class="footer">

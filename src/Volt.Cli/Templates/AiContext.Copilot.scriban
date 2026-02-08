@@ -29,7 +29,7 @@ CLI commands:
 - volt generate model <Name> <fields...> - Model + migration
 - volt generate controller <Name> - Empty controller
 - volt generate ai-context - Regenerate this file
-- volt db:migrate / db:rollback / db:seed
+- volt db migrate / db rollback / db seed
 
 Field types: string, text, int, bool, decimal, datetime, references (FK), image (upload), file (upload)
 
