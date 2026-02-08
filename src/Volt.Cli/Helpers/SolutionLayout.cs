@@ -68,6 +68,9 @@ public sealed class SolutionLayout : IProjectLayout
     public string GetMailerNamespace() => $"{_appName}.Services.Mailers";
     public string GetChannelNamespace() => $"{_appName}.Services.Channels";
 
+    public string GetDataCsprojPath() =>
+        Path.Combine(DataProjectRoot(), $"{_appName}.Data.csproj");
+
     private string ModelsProjectRoot() =>
         Path.Combine(_solutionRoot, "src", $"{_appName}.Models");
 

@@ -68,6 +68,12 @@ public sealed class SingleProjectLayout : IProjectLayout
     public string GetMailerNamespace() => $"{_appName}.Mailers";
     public string GetChannelNamespace() => $"{_appName}.Channels";
 
+    public string GetDataCsprojPath()
+    {
+        var csprojFiles = Directory.GetFiles(_projectRoot, "*.csproj");
+        return csprojFiles.Length > 0 ? csprojFiles[0] : Path.Combine(_projectRoot, $"{_appName}.csproj");
+    }
+
     private static string CombinePath(string root, string folder, string[] parts)
     {
         var segments = new string[parts.Length + 2];

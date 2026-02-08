@@ -23,6 +23,7 @@ public static class DbCommand
         command.Add(CreateConsoleSubcommand());
         command.Add(CreateProviderSubcommand());
         command.Add(CreateUseSubcommand());
+        command.Add(CreateDockerSubcommand());
 
         return command;
     }
@@ -120,6 +121,65 @@ public static class DbCommand
             DbOperations.Use(parseResult.GetValue(providerArg)!);
             return Task.CompletedTask;
         });
+
+        return cmd;
+    }
+
+    private static Command CreateDockerSubcommand()
+    {
+        var docker = new Command("docker", "Docker database lifecycle management");
+
+        docker.Add(CreateDockerUpSubcommand());
+        docker.Add(CreateDockerDownSubcommand());
+        docker.Add(CreateDockerStatusSubcommand());
+        docker.Add(CreateDockerLogsSubcommand());
+
+        return docker;
+    }
+
+    private static Command CreateDockerUpSubcommand()
+    {
+        var providerArg = new Argument<string?>("provider")
+        {
+            Description = "The database provider (postgres or sqlserver). Auto-detects if omitted.",
+            Arity = ArgumentArity.ZeroOrOne,
+        };
+
+        var cmd = new Command("up", "Start a Docker database container");
+        cmd.Add(providerArg);
+
+        cmd.SetAction(async (parseResult, _) =>
+        {
+            var provider = parseResult.GetValue(providerArg);
+            await DbDockerOperations.Up(provider);
+        });
+
+        return cmd;
+    }
+
+    private static Command CreateDockerDownSubcommand()
+    {
+        var cmd = new Command("down", "Stop and remove the Docker database container");
+
+        cmd.SetAction(async (_, _) => { await DbDockerOperations.Down(); });
+
+        return cmd;
+    }
+
+    private static Command CreateDockerStatusSubcommand()
+    {
+        var cmd = new Command("status", "Show Docker database container status");
+
+        cmd.SetAction(async (_, _) => { await DbDockerOperations.Status(); });
+
+        return cmd;
+    }
+
+    private static Command CreateDockerLogsSubcommand()
+    {
+        var cmd = new Command("logs", "Tail Docker database container logs");
+
+        cmd.SetAction(async (_, _) => { await DbDockerOperations.Logs(); });
 
         return cmd;
     }

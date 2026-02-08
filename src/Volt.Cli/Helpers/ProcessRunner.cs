@@ -87,6 +87,39 @@ public static class ProcessRunner
     }
 
     /// <summary>
+    /// Runs a process and captures its stdout as a string (stderr is discarded).
+    /// Useful for reading output from tools like docker without printing to the console.
+    /// </summary>
+    /// <param name="fileName">The executable to run.</param>
+    /// <param name="arguments">The command-line arguments.</param>
+    /// <param name="workingDirectory">The working directory for the process.</param>
+    /// <returns>A tuple of (exitCode, stdoutContent).</returns>
+    public static async Task<(int ExitCode, string Output)> RunCapturedAsync(
+        string fileName,
+        string arguments,
+        string? workingDirectory = null)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = fileName,
+            Arguments = arguments,
+            WorkingDirectory = workingDirectory ?? Directory.GetCurrentDirectory(),
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+
+        using var process = new Process { StartInfo = startInfo };
+        process.Start();
+
+        var output = await process.StandardOutput.ReadToEndAsync();
+        await process.StandardError.ReadToEndAsync();
+        await process.WaitForExitAsync();
+
+        return (process.ExitCode, output.Trim());
+    }
+
+    /// <summary>
     /// Checks whether a command-line tool is available on the system PATH.
     /// </summary>
     /// <param name="command">The command name to check (e.g., "csharprepl", "sqlite3").</param>

@@ -33,4 +33,6 @@ public interface IProjectLayout
     string GetJobNamespace();
     string GetMailerNamespace();
     string GetChannelNamespace();
+
+    string GetDataCsprojPath();
 }

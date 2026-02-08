@@ -80,6 +80,28 @@ volt db reset               # Drop, create, migrate, seed
 volt db status              # Show migration status
 ```
 
+### Docker Database Management
+
+Spin up a PostgreSQL or SQL Server container with a single command. Volt handles the Docker lifecycle and automatically switches your project's database provider:
+
+```bash
+# Start a PostgreSQL container (switches from SQLite automatically)
+volt db docker up postgres
+
+# Start a SQL Server container
+volt db docker up sqlserver
+
+# Auto-detect provider from project and start container
+volt db docker up
+
+# Container lifecycle
+volt db docker status        # Show container status
+volt db docker logs          # Tail container logs
+volt db docker down          # Stop and remove the container
+```
+
+When switching providers, Volt automatically updates your `.csproj` package references, `AppDbContext.cs` configuration, and runs `dotnet restore`. Requires [Docker Desktop](https://www.docker.com/products/docker-desktop) or Docker Engine.
+
 ---
 
 ## Project Structure
@@ -433,6 +455,10 @@ public static void Configure(VoltDbOptions db)
 | `volt db seed` | Run the database seeder |
 | `volt db reset` | Drop, recreate, migrate, and seed |
 | `volt db status` | Show migration status |
+| `volt db docker up [provider]` | Start a Docker database container (postgres or sqlserver) |
+| `volt db docker down` | Stop and remove the Docker database container |
+| `volt db docker status` | Show Docker container status |
+| `volt db docker logs` | Tail Docker container logs |
 | `volt destroy <type> <Name>` | Reverse a generate command |
 
 ### Field Type Syntax
